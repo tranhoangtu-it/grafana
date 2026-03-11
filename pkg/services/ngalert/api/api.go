@@ -54,6 +54,7 @@ type RuleAccessControlService interface {
 
 // API handlers.
 type API struct {
+<<<<<<< HEAD
 	Cfg                   *setting.Cfg
 	DatasourceCache       datasources.CacheService
 	DatasourceService     datasources.DataSourceService
@@ -203,9 +204,4 @@ func (api *API) RegisterAPIEndpoints(m *metrics.API) {
 
 	api.RegisterConvertPrometheusApiEndpoints(NewConvertPrometheusApi(convertSrv), m)
 
-	api.registerDatasourceSyncEndpoints(&DatasourceSyncSrv{
-		store:             api.DatasourceSyncStore,
-		featureManager:    api.FeatureManager,
-		datasourceService: api.DatasourceService,
-	}, m)
 }

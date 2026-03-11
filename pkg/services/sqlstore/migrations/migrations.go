@@ -174,6 +174,4 @@ func (oss *OSSMigrations) AddMigration(mg *Migrator) {
 	ualert.AddAlertRuleFolderFullpath(mg)
 
 	ualert.AddRuleAlertRoutingColumns(mg)
-
-	ualert.AddDatasourceSyncTable(mg)
 }
