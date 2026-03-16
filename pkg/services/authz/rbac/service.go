@@ -538,6 +538,7 @@ func (s *Service) validateListRequest(ctx context.Context, req *authzv1.ListRequ
 		ActionSets:   actionSets,
 		Group:        req.GetGroup(),
 		Resource:     req.GetResource(),
+		Subresource:  req.GetSubresource(),
 		Verb:         req.GetVerb(),
 		Options:      options,
 	}
@@ -1025,9 +1026,14 @@ func (s *Service) listPermission(ctx context.Context, scopeMap map[string]bool, 
 	defer span.End()
 	ctxLogger := s.logger.FromContext(ctx)
 
-	t, ok := s.mapper.Get(req.Group, req.Resource)
+	lookupResource := req.Resource
+	if req.Subresource != "" {
+		lookupResource = req.Resource + "/" + req.Subresource
+	}
+
+	t, ok := s.mapper.Get(req.Group, lookupResource)
 	if !ok {
-		ctxLogger.Debug("resource not in mapper, using K8s-native fallback", "group", req.Group, "resource", req.Resource)
+		ctxLogger.Debug("resource not in mapper, using K8s-native fallback", "group", req.Group, "resource", lookupResource)
 		t = newK8sNativeMapping(req.Group, req.Resource)
 	}
 

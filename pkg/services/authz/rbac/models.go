@@ -22,6 +22,7 @@ type listRequest struct {
 	UserUID      string
 	Group        string
 	Resource     string
+	Subresource  string
 	Verb         string
 	Action       string
 	ActionSets   []string

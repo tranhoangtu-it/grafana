@@ -946,6 +946,65 @@ func TestService_listPermission(t *testing.T) {
 			expectedFolders: []string{"some_folder_1", "some_folder_2"},
 		},
 		{
+			name: "should return dashboards that user has annotation read access to via subresource",
+			permissions: []accesscontrol.Permission{
+				{
+					Action:     "annotations:read",
+					Scope:      "dashboards:uid:dash1",
+					Kind:       "dashboards",
+					Attribute:  "uid",
+					Identifier: "dash1",
+				},
+				{
+					Action:     "annotations:read",
+					Scope:      "dashboards:uid:dash2",
+					Kind:       "dashboards",
+					Attribute:  "uid",
+					Identifier: "dash2",
+				},
+			},
+			folders: []store.Folder{},
+			list: listRequest{
+				Action:      "annotations:read",
+				Group:       "dashboard.grafana.app",
+				Resource:    "dashboards",
+				Subresource: "annotations",
+				Options:     &ListRequestOptions{},
+			},
+			expectedItems: []string{"dash1", "dash2"},
+		},
+		{
+			name: "should return folders when user has annotation access via subresource and folder scope",
+			permissions: []accesscontrol.Permission{
+				{
+					Action:     "annotations:read",
+					Scope:      "dashboards:uid:dash1",
+					Kind:       "dashboards",
+					Attribute:  "uid",
+					Identifier: "dash1",
+				},
+				{
+					Action:     "annotations:read",
+					Scope:      "folders:uid:some_folder",
+					Kind:       "folders",
+					Attribute:  "uid",
+					Identifier: "some_folder",
+				},
+			},
+			folders: []store.Folder{
+				{UID: "some_folder"},
+			},
+			list: listRequest{
+				Action:      "annotations:read",
+				Group:       "dashboard.grafana.app",
+				Resource:    "dashboards",
+				Subresource: "annotations",
+				Options:     &ListRequestOptions{},
+			},
+			expectedItems:   []string{"dash1"},
+			expectedFolders: []string{"some_folder"},
+		},
+		{
 			name: "should return folders that user has inherited access to",
 			permissions: []accesscontrol.Permission{
 				{
@@ -1650,6 +1709,23 @@ func TestService_K8sNativeFallback(t *testing.T) {
 		})
 		require.NoError(t, err)
 		assert.ElementsMatch(t, []string{"w1", "w2"}, resp.Items)
+	})
+
+	t.Run("List: dashboards/annotations subresource resolves correct mapper entry", func(t *testing.T) {
+		s := setup([]accesscontrol.Permission{
+			{Action: "annotations:read", Scope: "dashboards:uid:dash1", Kind: "dashboards", Attribute: "uid", Identifier: "dash1"},
+			{Action: "annotations:read", Scope: "dashboards:uid:dash2", Kind: "dashboards", Attribute: "uid", Identifier: "dash2"},
+		})
+		resp, err := s.List(ctx, &authzv1.ListRequest{
+			Namespace:   "org-12",
+			Subject:     "user:test-uid",
+			Group:       "dashboard.grafana.app",
+			Resource:    "dashboards",
+			Subresource: "annotations",
+			Verb:        "get",
+		})
+		require.NoError(t, err)
+		assert.ElementsMatch(t, []string{"dash1", "dash2"}, resp.Items)
 	})
 }
 
