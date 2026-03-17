@@ -24,7 +24,7 @@ import {
   VizPanel,
   sceneGraph,
 } from '@grafana/scenes';
-import { Button, FilterInput, ScrollContainer, Stack, ToolbarButton, useStyles2, Text } from '@grafana/ui';
+import { Button, FilterInput, ScrollContainer, Stack, ToolbarButton, useStyles2, Text, Sidebar } from '@grafana/ui';
 import { OptionFilter } from 'app/features/dashboard/components/PanelEditor/OptionsPaneOptions';
 import { getPanelPluginNotFound } from 'app/features/panel/components/PanelPluginError';
 import { vizSuggestionsTracker } from 'app/features/panel/components/VizTypePicker/interactions';
@@ -173,7 +173,7 @@ function PanelOptionsPaneComponent({ model }: SceneComponentProps<PanelOptionsPa
   return (
     <>
       {!isVizPickerOpen && (
-        <>
+        <Sidebar.OpenPane>
           <div className={styles.top}>
             <Stack gap={1}>
               <img alt={pluginMeta.name} src={pluginMeta.info.logos.small} className={styles.pluginIcon} />
@@ -199,6 +199,7 @@ function PanelOptionsPaneComponent({ model }: SceneComponentProps<PanelOptionsPa
                 <Trans i18nKey="dashboard-scene.visualization-button.text">Change</Trans>
               </Button>
             </Stack>
+<<<<<<< Updated upstream
             <Stack gap={1}>
               {hasFieldConfig && (
                 <ToolbarButton
@@ -218,6 +219,27 @@ function PanelOptionsPaneComponent({ model }: SceneComponentProps<PanelOptionsPa
                 tooltip={t('dashboard.panel-edit.visualization-button-tooltip', 'Search options')}
               />
             </Stack>
+||||||| Stash base
+            <Stack gap={1}>
+              {hasFieldConfig && (
+                <ToolbarButton
+                  icon="sliders-v-alt"
+                  tooltip={t('dashboard.panel-edit.only-overrides-button-tooltip', 'Show only overrides')}
+                  variant={onlyOverrides ? 'active' : 'canvas'}
+                  onClick={() => {
+                    model.onSetListMode(onlyOverrides ? OptionFilter.All : OptionFilter.Overrides);
+                  }}
+                />
+              )}
+              <Button
+                icon="search"
+                variant="secondary"
+                onClick={setIsSearchingOptions}
+                tooltip={t('dashboard.panel-edit.visualization-button-tooltip', 'Search options')}
+              />
+            </Stack>
+=======
+>>>>>>> Stashed changes
           </div>
           {isSearchingOptions && (
             <div className={styles.searchWrapper}>
@@ -238,7 +260,7 @@ function PanelOptionsPaneComponent({ model }: SceneComponentProps<PanelOptionsPa
           <ScrollContainer minHeight={isScrollingLayout ? 'max-content' : 0}>
             <PanelOptions panel={panel} searchQuery={searchQuery} listMode={listMode} data={data} />
           </ScrollContainer>
-        </>
+        </Sidebar.OpenPane>
       )}
       {isVizPickerOpen && (
         <PanelVizTypePicker
@@ -251,6 +273,22 @@ function PanelOptionsPaneComponent({ model }: SceneComponentProps<PanelOptionsPa
           hasPickedViz={hasPickedViz}
         />
       )}
+      <Sidebar.Toolbar>
+        <Sidebar.Button
+          icon="sliders-v-alt"
+          onClick={() => {}}
+          title={t('dashboard.sidebar.panel-edit.options', 'Options')}
+          data-testid={selectors.pages.Dashboard.Sidebar.optionsButton}
+          active={true}
+        />
+        <Sidebar.Button
+          icon="search"
+          onClick={() => {}}
+          title={t('dashboard.sidebar.panel-edit.options', 'Options')}
+          data-testid={selectors.pages.Dashboard.Sidebar.optionsButton}
+          active={false}
+        />
+      </Sidebar.Toolbar>
     </>
   );
 }

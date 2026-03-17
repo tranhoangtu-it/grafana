@@ -4,8 +4,16 @@ import { useEffect, useMemo } from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { t } from '@grafana/i18n';
+<<<<<<< Updated upstream
 import { SceneComponentProps, VizPanel } from '@grafana/scenes';
 import { Button, Spinner, ToolbarButton, useStyles2, useTheme2 } from '@grafana/ui';
+||||||| Stash base
+import { SceneComponentProps, useSceneObjectState, VizPanel } from '@grafana/scenes';
+import { Button, Spinner, ToolbarButton, useStyles2, useTheme2 } from '@grafana/ui';
+=======
+import { SceneComponentProps, useSceneObjectState, VizPanel } from '@grafana/scenes';
+import { Button, Sidebar, Spinner, ToolbarButton, useSidebar, useStyles2, useTheme2 } from '@grafana/ui';
+>>>>>>> Stashed changes
 import { MIN_SUGGESTIONS_PANE_WIDTH } from 'app/features/panel/suggestions/constants';
 
 import { useEditPaneCollapsed } from '../edit-pane/shared';
@@ -28,52 +36,33 @@ export function PanelEditorRenderer({ model }: SceneComponentProps<PanelEditor>)
 
   const theme = useTheme2();
   const panePadding = useMemo(() => +theme.spacing(2).replace(/px$/, ''), [theme]);
-  const { containerProps, primaryProps, secondaryProps, splitterProps, splitterState, onToggleCollapse } =
-    useSnappingSplitter({
-      direction: 'row',
-      dragPosition: 'end',
-      initialSize: 330,
-      usePixels: true,
-      collapsed: isInitiallyCollapsed,
-      collapseBelowPixels: MIN_SUGGESTIONS_PANE_WIDTH + panePadding,
-      disabled: isScrollingLayout,
-    });
 
-  useEffect(() => {
-    setIsCollapsed(splitterState.collapsed);
-  }, [splitterState.collapsed, setIsCollapsed]);
+  const sidebarContext = useSidebar({
+    hasOpenPane: true,
+    contentMargin: 1,
+    position: 'right',
+    persistanceKey: 'panel-edit',
+    defaultToDocked: true,
+    onClosePane: () => {},
+    bottomMargin: 0,
+    edgeMargin: 0,
+  });
 
   return (
     <>
       <NavToolbarActions dashboard={dashboard} />
       <div
-        {...containerProps}
-        className={cx(containerProps.className, styles.content)}
+        className={cx(styles.outerWrapper)}
         data-testid={selectors.components.PanelEditor.General.content}
+        {...sidebarContext.outerWrapperProps}
       >
-        <div {...primaryProps} className={cx(primaryProps.className, styles.body)}>
+        <div className={styles.body}>
           <VizAndDataPane model={model} />
         </div>
-        <div {...splitterProps} />
-        <div {...secondaryProps} className={cx(secondaryProps.className, styles.optionsPane)}>
-          {splitterState.collapsed && (
-            <div className={styles.expandOptionsWrapper}>
-              <ToolbarButton
-                tooltip={t('dashboard-scene.panel-editor-renderer.tooltip-open-options-pane', 'Open options pane')}
-                icon={'arrow-to-right'}
-                onClick={onToggleCollapse}
-                variant="canvas"
-                className={styles.rotate180}
-                aria-label={t(
-                  'dashboard-scene.panel-editor-renderer.aria-label-open-options-pane',
-                  'Open options pane'
-                )}
-              />
-            </div>
-          )}
-          {!splitterState.collapsed && optionsPane && <optionsPane.Component model={optionsPane} />}
-          {!splitterState.collapsed && !optionsPane && <Spinner />}
-        </div>
+        <Sidebar contextValue={sidebarContext}>
+          {optionsPane && <optionsPane.Component model={optionsPane} />}
+          {!optionsPane && <Spinner />}
+        </Sidebar>
       </div>
     </>
   );
@@ -179,6 +168,28 @@ function VizWrapper({ panel, tableView }: VizWrapperProps) {
 function getStyles(theme: GrafanaTheme2) {
   const scrollReflowMediaQuery = '@media ' + scrollReflowMediaCondition;
   return {
+    outerWrapper: css({
+      label: 'outer-wrapper',
+      display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1,
+      flex: '1 1 0',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      overflow: 'unset',
+      marginTop: theme.spacing(2),
+
+      [scrollReflowMediaQuery]: {
+        height: 'auto',
+        display: 'grid',
+        gridTemplateColumns: 'minmax(470px, 1fr) 330px',
+        gridTemplateRows: '1fr',
+        gap: theme.spacing(1),
+        position: 'static',
+        width: '100%',
+      },
+    }),
     pageContainer: css({
       display: 'grid',
       gridTemplateAreas: `
@@ -209,27 +220,13 @@ function getStyles(theme: GrafanaTheme2) {
       minHeight: 0,
       width: '100%',
     }),
-    content: css({
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      overflow: 'unset',
-      [scrollReflowMediaQuery]: {
-        height: 'auto',
-        display: 'grid',
-        gridTemplateColumns: 'minmax(470px, 1fr) 330px',
-        gridTemplateRows: '1fr',
-        gap: theme.spacing(1),
-        position: 'static',
-        width: '100%',
-      },
-    }),
     body: css({
       label: 'body',
       flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
       minHeight: 0,
+      paddingRight: theme.spacing(1),
     }),
     optionsPane: css({
       flexDirection: 'column',

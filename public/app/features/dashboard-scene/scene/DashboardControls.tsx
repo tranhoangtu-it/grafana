@@ -349,6 +349,7 @@ function getStyles(theme: GrafanaTheme2, isQueryEditorNext: boolean) {
     }),
     controlsPanelEdit: css({
       flexWrap: 'wrap-reverse',
+      paddingTop: 0,
       ...(isQueryEditorNext && {
         padding: 0,
         marginBottom: theme.spacing(-1),
