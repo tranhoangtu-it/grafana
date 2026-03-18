@@ -322,7 +322,7 @@ func TestSyncDatasourceConfigs_HTTPTimeout(t *testing.T) {
 
 func TestSyncDatasourceConfigs_SuccessPath(t *testing.T) {
 	// The success path test verifies that:
-	// 1. syncRemoteAMConfigsForOrgs fetches from Mimir (the test server is hit)
+	// 1. The remote AM sync loop fetches from Mimir (the test server is hit)
 	// 2. No error is logged (no panic, clean return)
 	//
 	// SaveAndApplyExtraConfiguration lives on MultiOrgAlertmanager which applies the config

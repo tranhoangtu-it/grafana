@@ -376,6 +376,23 @@ func (moa *MultiOrgAlertmanager) SyncAlertmanagersForOrgs(ctx context.Context, o
 		moa.logger.Error("Failed to load Alertmanager configurations", "error", err)
 		return
 	}
+
+	// Fetch admin configs upfront when remote AM sync is enabled so we can resolve the
+	// effective datasource UID per org without a separate DB round-trip later.
+	var adminCfgsByOrg map[int64]*models.AdminConfiguration
+	//nolint:staticcheck // not yet migrated to OpenFeature
+	if moa.featureManager.IsEnabledGlobally(featuremgmt.FlagAlertingRemoteAMConfigSync) {
+		adminCfgs, cfgErr := moa.adminConfigStore.GetAdminConfigurations()
+		if cfgErr != nil {
+			moa.logger.Warn("Failed to fetch admin configurations for remote AM sync", "error", cfgErr)
+		} else {
+			adminCfgsByOrg = make(map[int64]*models.AdminConfiguration, len(adminCfgs))
+			for _, cfg := range adminCfgs {
+				adminCfgsByOrg[cfg.OrgID] = cfg
+			}
+		}
+	}
+
 	moa.alertmanagersMtx.Lock()
 	for _, orgID := range orgIDs {
 		if _, isDisabledOrg := moa.settings.UnifiedAlerting.DisabledOrgs[orgID]; isDisabledOrg {
@@ -442,55 +459,36 @@ func (moa *MultiOrgAlertmanager) SyncAlertmanagersForOrgs(ctx context.Context, o
 
 	moa.cleanupOrphanLocalOrgState(ctx, orgsFound)
 
-	// Datasource config sync: fetch admin configs once and sync each active org that has
-	// a datasource UID configured. This runs after the lock is released so HTTP calls to
-	// Mimir/Cortex do not block alertmanager creation or removal.
-	//nolint:staticcheck // not yet migrated to OpenFeature
-	if moa.featureManager.IsEnabledGlobally(featuremgmt.FlagAlertingRemoteAMConfigSync) {
-		moa.syncRemoteAMConfigsForOrgs(ctx, orgsFound)
-	}
-}
-
-// syncRemoteAMConfigsForOrgs iterates the provided active orgs, resolves the effective
-// datasource UID for each (operator setting takes precedence over the per-org DB value),
-// and calls syncRemoteAMConfigForOrg for each org that has a UID configured.
-func (moa *MultiOrgAlertmanager) syncRemoteAMConfigsForOrgs(ctx context.Context, orgsFound map[int64]struct{}) {
-	adminCfgs, err := moa.adminConfigStore.GetAdminConfigurations()
-	if err != nil {
-		moa.logger.Warn("Failed to fetch admin configurations for datasource sync", "error", err)
-		return
-	}
-
-	adminCfgsByOrg := make(map[int64]*models.AdminConfiguration, len(adminCfgs))
-	for _, cfg := range adminCfgs {
-		adminCfgsByOrg[cfg.OrgID] = cfg
-	}
-
-	operatorUID := moa.settings.UnifiedAlerting.RemoteAlertmanagerUID
-
-	for orgID := range orgsFound {
-		uid := operatorUID
-		if uid == "" {
-			if adminCfg, ok := adminCfgsByOrg[orgID]; ok && adminCfg.RemoteAlertmanagerUID != nil {
-				uid = *adminCfg.RemoteAlertmanagerUID
+	// Remote AM config sync: for each active org that has a datasource UID configured,
+	// fetch the Mimir/Cortex configuration and apply it as ExtraConfiguration.
+	// adminCfgsByOrg is non-nil only when the feature flag is enabled and the DB fetch succeeded.
+	// This runs after the lock is released so HTTP calls do not block AM creation/removal.
+	if adminCfgsByOrg != nil {
+		operatorUID := moa.settings.UnifiedAlerting.RemoteAlertmanagerUID
+		for orgID := range orgsFound {
+			uid := operatorUID
+			if uid == "" {
+				if adminCfg, ok := adminCfgsByOrg[orgID]; ok && adminCfg.RemoteAlertmanagerUID != nil {
+					uid = *adminCfg.RemoteAlertmanagerUID
+				}
 			}
-		}
-		if uid == "" {
-			continue
-		}
+			if uid == "" {
+				continue
+			}
 
-		start := time.Now()
-		if syncErr := moa.syncRemoteAMConfigForOrg(ctx, orgID, uid); syncErr != nil {
-			moa.logger.Warn("Failed to sync datasource configuration",
-				"org_id", orgID, "datasource_uid", uid, "error", syncErr)
-			moa.metrics.RemoteAMConfigSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "error").Inc()
-		} else {
-			moa.logger.Info("Synced datasource configuration",
-				"org_id", orgID, "datasource_uid", uid,
-				"duration_ms", time.Since(start).Milliseconds())
-			moa.metrics.RemoteAMConfigSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "success").Inc()
+			start := time.Now()
+			if syncErr := moa.syncRemoteAMConfigForOrg(ctx, orgID, uid); syncErr != nil {
+				moa.logger.Warn("Failed to sync remote AM configuration",
+					"org_id", orgID, "datasource_uid", uid, "error", syncErr)
+				moa.metrics.RemoteAMConfigSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "error").Inc()
+			} else {
+				moa.logger.Info("Synced remote AM configuration",
+					"org_id", orgID, "datasource_uid", uid,
+					"duration_ms", time.Since(start).Milliseconds())
+				moa.metrics.RemoteAMConfigSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "success").Inc()
+			}
+			moa.metrics.RemoteAMConfigSyncDuration.Observe(time.Since(start).Seconds())
 		}
-		moa.metrics.RemoteAMConfigSyncDuration.Observe(time.Since(start).Seconds())
 	}
 }
 
