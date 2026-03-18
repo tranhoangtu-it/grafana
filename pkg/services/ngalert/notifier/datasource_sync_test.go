@@ -29,8 +29,10 @@ import (
 )
 
 // buildTestMOA creates a MultiOrgAlertmanager wired up with the provided dependencies for
-// testing syncDatasourceConfigs. orgIDs is the set of active orgs; disabledOrgs are orgs
-// that should be skipped. The feature flag is enabled when featureEnabled=true.
+// testing datasource sync via SyncAlertmanagersForOrgs. orgIDs is the set of active orgs;
+// disabledOrgs are orgs that should be skipped. The feature flag is enabled when
+// featureEnabled=true. The returned MOA has not yet synced; callers should invoke
+// moa.SyncAlertmanagersForOrgs to trigger both AM config sync and datasource sync.
 func buildTestMOA(
 	t *testing.T,
 	orgIDs []int64,
@@ -92,7 +94,6 @@ func buildTestMOA(
 		dsService,
 	)
 	require.NoError(t, err)
-	require.NoError(t, moa.LoadAndSyncAlertmanagersForOrgs(context.Background()))
 	return moa
 }
 
@@ -164,8 +165,7 @@ func TestSyncDatasourceConfigs_FeatureFlagDisabled(t *testing.T) {
 	adminCfg.AssertNotCalled(t, "GetAdminConfigurations")
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, &dsfakes.FakeDataSourceService{}, false, "")
-	// Call the sync directly — should return immediately.
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 	adminCfg.AssertExpectations(t)
 }
 
@@ -182,7 +182,7 @@ func TestSyncDatasourceConfigs_NoUID_Skipped(t *testing.T) {
 	// No GetDataSource call expected since UID is empty.
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 
 	adminCfg.AssertExpectations(t)
 	// No datasource lookup should have occurred.
@@ -202,7 +202,7 @@ func TestSyncDatasourceConfigs_DBUIDUsed(t *testing.T) {
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 
 	adminCfg.AssertExpectations(t)
 }
@@ -221,7 +221,7 @@ func TestSyncDatasourceConfigs_OperatorUIDOverridesDB(t *testing.T) {
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "operator-uid")
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 
 	// Verify the request was made to the server (the operator UID datasource was used).
 	adminCfg.AssertExpectations(t)
@@ -234,10 +234,11 @@ func TestSyncDatasourceConfigs_DisabledOrgSkipped(t *testing.T) {
 	}, nil)
 
 	dsSvc := &dsfakes.FakeDataSourceService{}
-	// Org 5 is disabled, no datasource lookup should happen.
+	// Org 5 is disabled, so it won't be in orgsFound and no datasource lookup should happen.
 
 	moa := buildTestMOA(t, []int64{}, map[int64]struct{}{5: {}}, adminCfg, dsSvc, true, "")
-	moa.syncDatasourceConfigs(context.Background())
+	// Pass an empty org list — org 5 is disabled and never enters orgsFound.
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{})
 
 	adminCfg.AssertExpectations(t)
 	// No GetDataSource should have been called.
@@ -251,7 +252,7 @@ func TestSyncDatasourceConfigs_GetAdminConfigurationsError(t *testing.T) {
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
 	// Should not panic or propagate the error — just log and return.
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 
 	adminCfg.AssertExpectations(t)
 }
@@ -284,7 +285,7 @@ func TestSyncDatasourceConfigs_PerOrgErrorIsolation(t *testing.T) {
 
 	moa := buildTestMOA(t, []int64{1, 2}, nil, adminCfg, dsSvc, true, "")
 	// Should not panic even though org 1 fails.
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1, 2})
 
 	adminCfg.AssertExpectations(t)
 }
@@ -307,11 +308,11 @@ func TestSyncDatasourceConfigs_HTTPTimeout(t *testing.T) {
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
-	// Use a very short timeout to test the context deadline.
+	// Set a very short timeout before triggering the sync so the HTTP call times out fast.
 	moa.httpClient = &http.Client{Timeout: 50 * time.Millisecond}
 
 	start := time.Now()
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 	elapsed := time.Since(start)
 
 	// Should have finished quickly — well under 5 seconds.
@@ -357,7 +358,7 @@ func TestSyncDatasourceConfigs_SuccessPath(t *testing.T) {
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
-	moa.syncDatasourceConfigs(context.Background())
+	moa.SyncAlertmanagersForOrgs(context.Background(), []int64{1})
 
 	adminCfg.AssertExpectations(t)
 	assert.True(t, serverCalled, "expected Mimir server to be called during sync")
