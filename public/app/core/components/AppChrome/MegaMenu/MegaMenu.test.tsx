@@ -14,6 +14,7 @@ const setup = () => {
       text: 'Section name',
       id: 'section',
       url: 'section',
+      icon: 'folder',
       children: [
         {
           text: 'Child1',
@@ -39,27 +40,28 @@ describe('MegaMenu', () => {
   afterEach(() => {
     window.localStorage.clear();
   });
+
   it('should render component', async () => {
     setup();
 
     expect(await screen.findByTestId(selectors.components.NavMenu.Menu)).toBeInTheDocument();
-    expect(await screen.findByRole('link', { name: 'Section name' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Section name' })).toBeInTheDocument();
   });
 
-  it('should render children', async () => {
+  it('should render children when parent is clicked', async () => {
     setup();
-    await userEvent.click(await screen.findByRole('button', { name: 'Expand section: Section name' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Section name' }));
     expect(await screen.findByRole('link', { name: 'Child1' })).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'Child2' })).toBeInTheDocument();
   });
 
-  it('should render grandchildren', async () => {
+  it('should render grandchildren when child is expanded', async () => {
     setup();
-    await userEvent.click(await screen.findByRole('button', { name: 'Expand section: Section name' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Section name' }));
     expect(await screen.findByRole('link', { name: 'Child1' })).toBeInTheDocument();
-    await userEvent.click(await screen.findByRole('button', { name: 'Expand section: Child1' }));
+    expect(screen.queryByRole('link', { name: 'Grandchild1' })).not.toBeInTheDocument();
+    await userEvent.click(await screen.findByRole('button', { name: 'Expand Child1' }));
     expect(await screen.findByRole('link', { name: 'Grandchild1' })).toBeInTheDocument();
-    expect(await screen.findByRole('link', { name: 'Child2' })).toBeInTheDocument();
   });
 
   it('should filter out profile', async () => {

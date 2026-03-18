@@ -10,21 +10,34 @@ export const getStyles = (theme: GrafanaTheme2) => {
   )`;
 
   return {
+    dashGrid: css({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+      gap: theme.spacing(1.5),
+      padding: theme.spacing(0, 0.5),
+    }),
     dashlistLink: css({
       display: 'flex',
-      borderBottom: `1px solid ${theme.colors.border.weak}`,
-      margin: theme.spacing(1),
-      padding: theme.spacing(1),
+      padding: theme.spacing(1, 1.5),
       alignItems: 'center',
+      borderRadius: theme.shape.radius.default,
+      border: `1px solid ${theme.colors.border.weak}`,
+      background: theme.colors.background.secondary,
+      transition: 'border-color 0.15s ease, background 0.15s ease',
+
+      '&:hover': {
+        borderColor: theme.colors.border.medium,
+        background: theme.colors.action.hover,
+      },
 
       a: {
         flex: 1,
+        minWidth: 0,
 
         '&:hover': {
           '> p': {
             '&:first-child': {
-              color: theme.colors.text.link,
-              textDecoration: 'underline',
+              color: theme.colors.text.primary,
             },
           },
         },

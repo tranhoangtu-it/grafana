@@ -4,24 +4,24 @@
     {
       "datasource": null,
       "gridPos": {
-        "h": 3,
+        "h": 10,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "title": "",
-      "transparent": false,
+      "transparent": true,
       "type": "welcome"
     },
     {
       "datasource": null,
       "folderId": 0,
       "gridPos": {
-        "h": 15,
-        "w": 12,
+        "h": 8,
+        "w": 24,
         "x": 0,
-        "y": 4
+        "y": 10
       },
       "id": 3,
       "links": [],
@@ -31,20 +31,21 @@
         "showSearch": false,
         "showHeadings": true,
         "folderId": 0,
-        "maxItems": 30,
+        "maxItems": 10,
         "tags": [],
         "query": ""
       },
       "title": "Dashboards",
+      "transparent": true,
       "type": "dashlist"
     },
     {
       "datasource": null,
       "gridPos": {
-        "h": 15,
-        "w": 12,
-        "x": 12,
-        "y": 4
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
       },
       "id": 4,
       "links": [],
@@ -52,6 +53,7 @@
         "feedUrl": "https://grafana.com/blog/news.xml"
       },
       "title": "Latest from the blog",
+      "transparent": true,
       "type": "news"
     }
   ],

@@ -1,14 +1,17 @@
+import { css } from '@emotion/css';
 import { useEffect } from 'react';
 
-import { PanelProps } from '@grafana/data';
+import { GrafanaTheme2, PanelProps } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { RefreshEvent } from '@grafana/runtime';
-import { Alert, ScrollContainer, TextLink } from '@grafana/ui';
+import { Alert, TextLink, useStyles2 } from '@grafana/ui';
 
 import { News } from './component/News';
 import { DEFAULT_FEED_URL } from './constants';
 import { Options } from './panelcfg.gen';
 import { useNewsFeed } from './useNewsFeed';
+
+const MAX_NEWS_ITEMS = 4;
 
 interface NewsPanelProps extends PanelProps<Options> {}
 
@@ -18,6 +21,7 @@ export function NewsPanel(props: NewsPanelProps) {
     options: { feedUrl = DEFAULT_FEED_URL, showImage },
   } = props;
 
+  const styles = useStyles2(getNewsPanelStyles);
   const { state, getNews } = useNewsFeed(feedUrl);
 
   useEffect(() => {
@@ -56,11 +60,23 @@ export function NewsPanel(props: NewsPanelProps) {
     return null;
   }
 
+  const itemCount = Math.min(state.value.length, MAX_NEWS_ITEMS);
+
   return (
-    <ScrollContainer minHeight="100%">
-      {state.value.map((_, index) => {
-        return <News key={index} index={index} width={width} showImage={showImage} data={state.value} />;
-      })}
-    </ScrollContainer>
+    <div className={styles.grid}>
+      {Array.from({ length: itemCount }, (_, index) => (
+        <News key={index} index={index} width={width} showImage={showImage} data={state.value} />
+      ))}
+    </div>
   );
 }
+
+const getNewsPanelStyles = (theme: GrafanaTheme2) => ({
+  grid: css({
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+    gap: theme.spacing(1),
+    padding: theme.spacing(0, 0.5),
+    height: '100%',
+  }),
+});

@@ -108,6 +108,7 @@ function DashboardEditPaneSplitterNewLayouts({ dashboard, isEditing, body, contr
 
   function renderBody() {
     const renderWithoutSidebar = isPlaying || kioskMode === KioskMode.Full;
+    const hideSidebar = !dashboard.state.meta.canEdit && !isEditing;
 
     // In kiosk mode the full document body scrolls so we don't need to wrap in our own scrollbar
     if (renderWithoutSidebar) {
@@ -117,6 +118,23 @@ function DashboardEditPaneSplitterNewLayouts({ dashboard, isEditing, body, contr
           data-testid={selectors.components.DashboardEditPaneSplitter.primaryBody}
         >
           <NativeScrollbar onSetScrollRef={dashboard.onSetScrollRef}>{body}</NativeScrollbar>
+        </div>
+      );
+    }
+
+    if (hideSidebar) {
+      return (
+        <div
+          className={styles.bodyWrapper}
+          data-testid={selectors.components.DashboardEditPaneSplitter.primaryBody}
+        >
+          <div
+            className={styles.scrollContainer}
+            ref={onBodyRef}
+            data-testid={selectors.components.DashboardEditPaneSplitter.bodyContainer}
+          >
+            {body}
+          </div>
         </div>
       );
     }

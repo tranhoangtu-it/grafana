@@ -118,39 +118,41 @@ export type ThemeColorsInput = z.infer<typeof ThemeColorsInputSchema>;
 class DarkColors implements ThemeColorsBase<Partial<ThemeRichColor>> {
   mode: ThemeColorsMode = 'dark';
 
-  // Used to get more white opacity colors
-  whiteBase = '204, 204, 220';
+  whiteBase = '224, 229, 238';
 
   border = {
-    weak: `rgba(${this.whiteBase}, 0.12)`,
-    medium: `rgba(${this.whiteBase}, 0.2)`,
-    strong: `rgba(${this.whiteBase}, 0.30)`,
+    weak: `rgba(${this.whiteBase}, 0.07)`,
+    medium: `rgba(${this.whiteBase}, 0.12)`,
+    strong: `rgba(${this.whiteBase}, 0.20)`,
   };
 
   text = {
     primary: `rgb(${this.whiteBase})`,
-    secondary: `rgba(${this.whiteBase}, 0.65)`,
-    disabled: `rgba(${this.whiteBase}, 0.61)`,
+    secondary: `rgba(${this.whiteBase}, 0.55)`,
+    disabled: `rgba(${this.whiteBase}, 0.45)`,
     link: palette.blueDarkText,
     maxContrast: palette.white,
   };
 
   primary = {
-    main: palette.blueDarkMain,
-    text: palette.blueDarkText,
-    border: palette.blueDarkText,
+    main: palette.orangeDarkMain,
+    text: palette.orangeDarkText,
+    border: palette.orangeDarkText,
   };
 
   secondary = {
     main: palette.gray20,
     shade: palette.gray25,
-    transparent: `rgba(${this.whiteBase}, 0.08)`,
+    transparent: `rgba(${this.whiteBase}, 0.06)`,
     text: this.text.primary,
     contrastText: `rgb(${this.whiteBase})`,
-    border: `rgba(${this.whiteBase}, 0.08)`,
+    border: `rgba(${this.whiteBase}, 0.06)`,
   };
 
-  info = this.primary;
+  info = {
+    main: palette.blueDarkMain,
+    text: palette.blueDarkText,
+  };
 
   error = {
     main: palette.redDarkMain,
@@ -163,38 +165,38 @@ class DarkColors implements ThemeColorsBase<Partial<ThemeRichColor>> {
   };
 
   warning = {
-    main: palette.orangeDarkMain,
-    text: palette.orangeDarkText,
+    main: palette.yellowDarkMain,
+    text: palette.yellowDarkText,
   };
 
   background = {
     canvas: palette.gray05,
-    primary: palette.gray10,
-    secondary: palette.gray15,
-    elevated: palette.gray15,
+    primary: palette.gray15,
+    secondary: palette.gray20,
+    elevated: palette.gray20,
   };
 
   action = {
-    hover: `rgba(${this.whiteBase}, 0.16)`,
-    selected: `rgba(${this.whiteBase}, 0.12)`,
+    hover: `rgba(${this.whiteBase}, 0.08)`,
+    selected: `rgba(${this.whiteBase}, 0.10)`,
     selectedBorder: palette.orangeDarkMain,
-    focus: `rgba(${this.whiteBase}, 0.16)`,
-    hoverOpacity: 0.08,
+    focus: `rgba(${this.whiteBase}, 0.10)`,
+    hoverOpacity: 0.06,
     disabledText: this.text.disabled,
-    disabledBackground: `rgba(${this.whiteBase}, 0.04)`,
+    disabledBackground: `rgba(${this.whiteBase}, 0.03)`,
     disabledOpacity: 0.38,
   };
 
   gradients = {
-    brandHorizontal: 'linear-gradient(270deg, #F55F3E 0%, #FF8833 100%)',
-    brandVertical: 'linear-gradient(0.01deg, #F55F3E 0.01%, #FF8833 99.99%)',
+    brandHorizontal: 'linear-gradient(270deg, #F2B896 0%, #E8956A 100%)',
+    brandVertical: 'linear-gradient(0.01deg, #F2B896 0.01%, #E8956A 99.99%)',
   };
 
-  scrollbar = `rgba(${this.whiteBase}, 0.3)`;
+  scrollbar = `rgba(${this.whiteBase}, 0.2)`;
 
   contrastThreshold = 3;
-  hoverFactor = 0.03;
-  tonalOffset = 0.15;
+  hoverFactor = 0.025;
+  tonalOffset = 0.12;
 }
 
 class LightColors implements ThemeColorsBase<Partial<ThemeRichColor>> {

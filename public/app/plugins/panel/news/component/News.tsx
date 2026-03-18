@@ -1,4 +1,4 @@
-import { css, cx } from '@emotion/css';
+import { css } from '@emotion/css';
 import { useId } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
@@ -15,29 +15,16 @@ interface NewsItemProps {
   data: DataFrameView<NewsItem>;
 }
 
-function NewsComponent({ width, showImage, data, index }: NewsItemProps) {
+function NewsComponent({ data, index }: NewsItemProps) {
   const titleId = useId();
   const styles = useStyles2(getStyles);
-  const useWideLayout = width > 600;
   const newsItem = data.get(index);
 
   return (
-    <article aria-labelledby={titleId} className={cx(styles.item, useWideLayout && styles.itemWide)}>
-      {showImage && newsItem.ogImage && (
-        <a
-          tabIndex={-1}
-          href={textUtil.sanitizeUrl(newsItem.link)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cx(styles.socialImage, useWideLayout && styles.socialImageWide)}
-          aria-hidden
-        >
-          <img src={newsItem.ogImage} alt={newsItem.title} />
-        </a>
-      )}
+    <article aria-labelledby={titleId} className={styles.item}>
       <div className={styles.body}>
         <time className={styles.date} dateTime={dateTimeFormat(newsItem.date, { format: 'MMM DD' })}>
-          {dateTimeFormat(newsItem.date, { format: 'MMM DD' })}{' '}
+          {dateTimeFormat(newsItem.date, { format: 'MMM DD' })}
         </time>
 
         <h1 className={styles.title} id={titleId}>
@@ -51,27 +38,15 @@ function NewsComponent({ width, showImage, data, index }: NewsItemProps) {
   );
 }
 
-const NewsSkeleton: SkeletonComponent<Pick<NewsItemProps, 'width' | 'showImage'>> = ({
-  width,
-  showImage,
-  rootProps,
-}) => {
+const NewsSkeleton: SkeletonComponent<Pick<NewsItemProps, 'width' | 'showImage'>> = ({ rootProps }) => {
   const styles = useStyles2(getStyles);
-  const useWideLayout = width > 600;
 
   return (
-    <div className={cx(styles.item, useWideLayout && styles.itemWide)} {...rootProps}>
-      {showImage && (
-        <Skeleton
-          containerClassName={cx(styles.socialImage, useWideLayout && styles.socialImageWide)}
-          width={useWideLayout ? '250px' : '100%'}
-          height={useWideLayout ? '150px' : width * 0.5}
-        />
-      )}
+    <div className={styles.item} {...rootProps}>
       <div className={styles.body}>
         <Skeleton containerClassName={styles.date} width={60} />
-        <Skeleton containerClassName={styles.title} width={250} />
-        <Skeleton containerClassName={styles.content} width="100%" count={6} />
+        <Skeleton containerClassName={styles.title} width="80%" />
+        <Skeleton containerClassName={styles.content} width="100%" count={2} />
       </div>
     </div>
   );
@@ -85,55 +60,49 @@ const getStyles = (theme: GrafanaTheme2) => ({
   }),
   item: css({
     display: 'flex',
-    padding: theme.spacing(1),
-    position: 'relative',
-    marginBottom: theme.spacing(0.5),
-    marginRight: theme.spacing(1),
-    borderBottom: `2px solid ${theme.colors.border.weak}`,
-    background: theme.colors.background.primary,
     flexDirection: 'column',
-    flexShrink: 0,
-  }),
-  itemWide: css({
-    flexDirection: 'row',
+    padding: theme.spacing(1.5),
+    borderRadius: theme.shape.radius.default,
+    border: `1px solid ${theme.colors.border.weak}`,
+    background: theme.colors.background.secondary,
+    transition: 'border-color 0.15s ease, background 0.15s ease',
+
+    '&:hover': {
+      borderColor: theme.colors.border.medium,
+      background: theme.colors.action.hover,
+    },
   }),
   body: css({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-  }),
-  socialImage: css({
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(1),
-    '> img': {
-      width: '100%',
-      borderRadius: `${theme.shape.radius.default} ${theme.shape.radius.default} 0 0`,
-    },
-  }),
-  socialImageWide: css({
-    marginRight: theme.spacing(2),
-    marginBottom: 0,
-    '> img': {
-      width: '250px',
-      borderRadius: theme.shape.radius.default,
-    },
+    minWidth: 0,
   }),
   title: css({
-    ...theme.typography.h3,
-    fontSize: '16px',
+    ...theme.typography.body,
+    fontWeight: theme.typography.fontWeightMedium,
     marginBottom: theme.spacing(0.5),
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical' as const,
+    WebkitLineClamp: 2,
+    overflow: 'hidden',
   }),
   content: css({
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical' as const,
+    WebkitLineClamp: 2,
+    overflow: 'hidden',
+
     p: {
-      marginBottom: theme.spacing(0.5),
-      color: theme.colors.text.primary,
+      marginBottom: 0,
+      color: theme.colors.text.secondary,
+      fontSize: theme.typography.bodySmall.fontSize,
     },
   }),
   date: css({
     marginBottom: theme.spacing(0.5),
-    fontWeight: 500,
-    borderRadius: `0 0 0 ${theme.shape.radius.default}`,
-    color: theme.colors.text.secondary,
+    fontSize: theme.typography.bodySmall.fontSize,
+    fontWeight: theme.typography.fontWeightRegular,
+    color: theme.colors.text.disabled,
   }),
 });

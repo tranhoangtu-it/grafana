@@ -4,7 +4,7 @@ import { useThrottle } from 'react-use';
 
 import { InterpolateFunction, PanelProps, textUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { ScrollContainer, Box, Text, EmptyState } from '@grafana/ui';
+import { ScrollContainer, Box, Text, EmptyState, useStyles2 } from '@grafana/ui';
 import { getConfig } from 'app/core/config';
 import impressionSrv from 'app/core/services/impression_srv';
 import { useDashboardLocationInfo } from 'app/features/search/hooks/useDashboardLocationInfo';
@@ -13,6 +13,7 @@ import { DashboardQueryResult, QueryResponse, SearchQuery } from 'app/features/s
 
 import { DashListItem } from './DashListItem';
 import { Options } from './panelcfg.gen';
+import { getStyles } from './styles';
 import { useDashListUrlParams } from './utils';
 
 export type Dashboard = DashboardQueryResult & {
@@ -176,28 +177,29 @@ export function DashList(props: PanelProps<Options>) {
 
   const urlParams = useDashListUrlParams(props);
 
-  const renderList = (dashboards: Dashboard[]) => (
-    <ul>
+  const styles = useStyles2(getStyles);
+
+  const renderGrid = (dashboards: Dashboard[]) => (
+    <div className={styles.dashGrid}>
       {dashboards.map((dash) => {
         let url = dash.url + urlParams;
         url = getConfig().disableSanitizeHtml ? url : textUtil.sanitizeUrl(url);
 
         const locationInfo = showFolderNames && dash.location ? foldersByUid[dash.location] : undefined;
         return (
-          <li key={`dash-${dash.uid}`}>
-            <DashListItem
-              dashboard={dash}
-              url={url}
-              showFolderNames={showFolderNames}
-              locationInfo={locationInfo}
-              layoutMode="list"
-              onStarChange={handleStarChange}
-              source="dashListView"
-            />
-          </li>
+          <DashListItem
+            key={`dash-${dash.uid}`}
+            dashboard={dash}
+            url={url}
+            showFolderNames={showFolderNames}
+            locationInfo={locationInfo}
+            layoutMode="list"
+            onStarChange={handleStarChange}
+            source="dashListView"
+          />
         );
       })}
-    </ul>
+    </div>
   );
 
   const showEmptyState = dashboardGroups.every(({ show }) => !show);
@@ -214,18 +216,15 @@ export function DashList(props: PanelProps<Options>) {
       {dashboardGroups.map(
         ({ show, header, dashboards }, i) =>
           show && (
-            <Box marginBottom={2} paddingTop={0.5} key={`dash-group-${i}`}>
+            <Box marginBottom={1} paddingTop={0.5} key={`dash-group-${i}`}>
               {showHeadings && (
-                <Box marginRight={1} paddingX={1} paddingY={0.25}>
-                  {/* this testid is only necessary because we cannot determine what heading level to use here without some kind of
-                   top-level way to manage that across the application. these _should_ be headings, we just won't know what level they should be
-                   without something global, so for now we're using a testid to target these in tests. */}
+                <Box marginRight={1} paddingX={1} paddingY={0.25} marginBottom={0.5}>
                   <Text data-testid="dashlist-header" variant="h6">
                     {header}
                   </Text>
                 </Box>
               )}
-              {renderList(dashboards)}
+              {renderGrid(dashboards)}
             </Box>
           )
       )}
