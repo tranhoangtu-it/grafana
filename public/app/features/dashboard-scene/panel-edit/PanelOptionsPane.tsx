@@ -34,7 +34,8 @@ import { PanelOptions } from './PanelOptions';
 import { PanelVizTypePicker } from './PanelVizTypePicker';
 import { INTERACTION_EVENT_NAME, INTERACTION_ITEM } from './interaction';
 import { useScrollReflowLimit } from './useScrollReflowLimit';
-import { AiSectionPlaceholder, VizOptionsSidebar, VizSidebarSection } from './VizOptionsSidebar';
+import { VizOptionsSidebar, VizSidebarSection } from './VizOptionsSidebar';
+import { VizAISection } from './VizAISection';
 import { StylesSection } from './VizStylesSection';
 
 export interface PanelOptionsPaneState extends SceneObjectState {
@@ -190,7 +191,7 @@ function PanelOptionsPaneComponent({ model }: SceneComponentProps<PanelOptionsPa
     if (isSidebarEnabled) {
       switch (activeSection) {
         case 'ai':
-          return <AiSectionPlaceholder />;
+          return <VizAISection panel={panel} />;
         case 'styles':
           return <StylesSection panel={panel} data={data} />;
         case 'overrides':

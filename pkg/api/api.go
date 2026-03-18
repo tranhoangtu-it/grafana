@@ -288,6 +288,9 @@ func (hs *HTTPServer) registerRoutes() {
 	// ShortURL API
 	hs.registerShortURLAPI(r)
 
+	// LLM PoC API
+	hs.registerLLMPocAPI(r)
+
 	// authed api
 	r.Group("/api", func(apiRoute routing.RouteRegister) {
 		// user (signed in)

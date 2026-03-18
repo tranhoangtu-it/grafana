@@ -165,6 +165,9 @@ type Cfg struct {
 	// SMTP email settings
 	Smtp SmtpSettings
 
+	// LLM PoC settings
+	LLMPoc LLMPocSettings
+
 	// Rendering
 	ImagesDir                      string
 	CSVsDir                        string
@@ -1461,6 +1464,7 @@ func (cfg *Cfg) parseINIFile(iniFile *ini.File) error {
 	if err := cfg.readSmtpSettings(); err != nil {
 		return err
 	}
+	cfg.readLLMPocSettings()
 	if err := cfg.readAnnotationSettings(); err != nil {
 		return err
 	}
