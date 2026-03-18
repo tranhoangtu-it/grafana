@@ -66,8 +66,8 @@ func (srv ConfigSrv) RouteGetNGalertConfig(c *contextmodel.ReqContext) response.
 		resp.AlertmanagersChoice = apimodels.AlertmanagersChoice(cfg.SendAlertsTo.String())
 	}
 
-	if cfg.DatasourceSyncUID != nil {
-		resp.DatasourceSyncUID = *cfg.DatasourceSyncUID
+	if cfg.RemoteAlertmanagerUID != nil {
+		resp.RemoteAlertmanagerUID = *cfg.RemoteAlertmanagerUID
 	}
 
 	return response.JSON(http.StatusOK, resp)
@@ -78,7 +78,7 @@ func (srv ConfigSrv) RoutePostNGalertConfig(c *contextmodel.ReqContext, body api
 		return accessForbiddenResp()
 	}
 
-	if body.AlertmanagersChoice == nil && body.DatasourceSyncUID == nil {
+	if body.AlertmanagersChoice == nil && body.RemoteAlertmanagerUID == nil {
 		return response.Error(http.StatusBadRequest, "no fields to update", nil)
 	}
 
@@ -111,10 +111,10 @@ func (srv ConfigSrv) RoutePostNGalertConfig(c *contextmodel.ReqContext, body api
 	}
 
 	//nolint:staticcheck // not yet migrated to OpenFeature
-	if body.DatasourceSyncUID != nil && srv.featureManager.IsEnabled(c.Req.Context(), featuremgmt.FlagAlertingDatasourceSync) {
-		if *body.DatasourceSyncUID != "" {
+	if body.RemoteAlertmanagerUID != nil && srv.featureManager.IsEnabled(c.Req.Context(), featuremgmt.FlagAlertingRemoteAMConfigSync) {
+		if *body.RemoteAlertmanagerUID != "" {
 			ds, err := srv.datasourceService.GetDataSource(c.Req.Context(), &datasources.GetDataSourceQuery{
-				UID:   *body.DatasourceSyncUID,
+				UID:   *body.RemoteAlertmanagerUID,
 				OrgID: c.GetOrgID(),
 			})
 			if err != nil {
@@ -132,7 +132,7 @@ func (srv ConfigSrv) RoutePostNGalertConfig(c *contextmodel.ReqContext, body api
 			}
 		}
 
-		adminConfig.DatasourceSyncUID = body.DatasourceSyncUID
+		adminConfig.RemoteAlertmanagerUID = body.RemoteAlertmanagerUID
 	}
 
 	if err := srv.store.UpdateAdminConfiguration(store.UpdateAdminConfigurationCmd{

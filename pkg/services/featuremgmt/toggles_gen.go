@@ -914,7 +914,7 @@ const (
 	// Enables the new colorblind-friendly themes
 	FlagColorblindThemes = "colorblindThemes"
 
-	// FlagAlertingDatasourceSync
+	// FlagAlertingRemoteAMConfigSync
 	// Automatically sync Mimir Alertmanager datasource configuration as ExtraConfiguration in Grafana
-	FlagAlertingDatasourceSync = "alertingDatasourceSync"
+	FlagAlertingRemoteAMConfigSync = "alertingRemoteAlertmanagerConfigSync"
 )

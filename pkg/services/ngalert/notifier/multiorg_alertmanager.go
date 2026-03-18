@@ -446,15 +446,15 @@ func (moa *MultiOrgAlertmanager) SyncAlertmanagersForOrgs(ctx context.Context, o
 	// a datasource UID configured. This runs after the lock is released so HTTP calls to
 	// Mimir/Cortex do not block alertmanager creation or removal.
 	//nolint:staticcheck // not yet migrated to OpenFeature
-	if moa.featureManager.IsEnabledGlobally(featuremgmt.FlagAlertingDatasourceSync) {
-		moa.syncDatasourceConfigsForOrgs(ctx, orgsFound)
+	if moa.featureManager.IsEnabledGlobally(featuremgmt.FlagAlertingRemoteAMConfigSync) {
+		moa.syncRemoteAMConfigsForOrgs(ctx, orgsFound)
 	}
 }
 
-// syncDatasourceConfigsForOrgs iterates the provided active orgs, resolves the effective
+// syncRemoteAMConfigsForOrgs iterates the provided active orgs, resolves the effective
 // datasource UID for each (operator setting takes precedence over the per-org DB value),
-// and calls syncDatasourceConfigForOrg for each org that has a UID configured.
-func (moa *MultiOrgAlertmanager) syncDatasourceConfigsForOrgs(ctx context.Context, orgsFound map[int64]struct{}) {
+// and calls syncRemoteAMConfigForOrg for each org that has a UID configured.
+func (moa *MultiOrgAlertmanager) syncRemoteAMConfigsForOrgs(ctx context.Context, orgsFound map[int64]struct{}) {
 	adminCfgs, err := moa.adminConfigStore.GetAdminConfigurations()
 	if err != nil {
 		moa.logger.Warn("Failed to fetch admin configurations for datasource sync", "error", err)
@@ -466,13 +466,13 @@ func (moa *MultiOrgAlertmanager) syncDatasourceConfigsForOrgs(ctx context.Contex
 		adminCfgsByOrg[cfg.OrgID] = cfg
 	}
 
-	operatorUID := moa.settings.UnifiedAlerting.DatasourceSyncUID
+	operatorUID := moa.settings.UnifiedAlerting.RemoteAlertmanagerUID
 
 	for orgID := range orgsFound {
 		uid := operatorUID
 		if uid == "" {
-			if adminCfg, ok := adminCfgsByOrg[orgID]; ok && adminCfg.DatasourceSyncUID != nil {
-				uid = *adminCfg.DatasourceSyncUID
+			if adminCfg, ok := adminCfgsByOrg[orgID]; ok && adminCfg.RemoteAlertmanagerUID != nil {
+				uid = *adminCfg.RemoteAlertmanagerUID
 			}
 		}
 		if uid == "" {
@@ -480,17 +480,17 @@ func (moa *MultiOrgAlertmanager) syncDatasourceConfigsForOrgs(ctx context.Contex
 		}
 
 		start := time.Now()
-		if syncErr := moa.syncDatasourceConfigForOrg(ctx, orgID, uid); syncErr != nil {
+		if syncErr := moa.syncRemoteAMConfigForOrg(ctx, orgID, uid); syncErr != nil {
 			moa.logger.Warn("Failed to sync datasource configuration",
 				"org_id", orgID, "datasource_uid", uid, "error", syncErr)
-			moa.metrics.DatasourceSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "error").Inc()
+			moa.metrics.RemoteAMConfigSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "error").Inc()
 		} else {
 			moa.logger.Info("Synced datasource configuration",
 				"org_id", orgID, "datasource_uid", uid,
 				"duration_ms", time.Since(start).Milliseconds())
-			moa.metrics.DatasourceSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "success").Inc()
+			moa.metrics.RemoteAMConfigSyncTotal.WithLabelValues(fmt.Sprintf("%d", orgID), "success").Inc()
 		}
-		moa.metrics.DatasourceSyncDuration.Observe(time.Since(start).Seconds())
+		moa.metrics.RemoteAMConfigSyncDuration.Observe(time.Since(start).Seconds())
 	}
 }
 
@@ -722,9 +722,9 @@ type mimirConfigResponse struct {
 	TemplateFiles      map[string]string `yaml:"template_files" json:"template_files"`
 }
 
-// syncDatasourceConfigForOrg fetches and applies the Mimir/Cortex Alertmanager configuration
+// syncRemoteAMConfigForOrg fetches and applies the Mimir/Cortex Alertmanager configuration
 // for a single org. It uses a 10-second timeout to avoid blocking the sync loop.
-func (moa *MultiOrgAlertmanager) syncDatasourceConfigForOrg(ctx context.Context, orgID int64, datasourceUID string) error {
+func (moa *MultiOrgAlertmanager) syncRemoteAMConfigForOrg(ctx context.Context, orgID int64, datasourceUID string) error {
 	syncCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 

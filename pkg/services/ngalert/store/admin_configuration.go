@@ -103,8 +103,8 @@ func buildUpdateCols(adminConfig *ngmodels.AdminConfiguration) []string {
 		cols = append(cols, "send_alerts_to")
 	}
 
-	if adminConfig.DatasourceSyncUID != nil {
-		cols = append(cols, "datasource_sync_uid")
+	if adminConfig.RemoteAlertmanagerUID != nil {
+		cols = append(cols, "remote_alertmanager_uid")
 	}
 
 	return cols

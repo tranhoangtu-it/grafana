@@ -156,12 +156,12 @@ type UnifiedAlertingSettings struct {
 
 	IgnorePendingForNoDataAndError bool
 
-	// DatasourceSyncUID is the operator-level override for the Mimir/Cortex Alertmanager
+	// RemoteAlertmanagerUID is the operator-level override for the Mimir/Cortex Alertmanager
 	// datasource UID to sync into Grafana. When non-empty, it applies to all orgs and
 	// overrides any per-org value stored in the database.
-	// Configured via the [unified_alerting] ini key "datasource_sync_uid" or the
-	// GF_UNIFIED_ALERTING_DATASOURCE_SYNC_UID environment variable.
-	DatasourceSyncUID string
+	// Configured via the [unified_alerting] ini key "remote_alertmanager_uid" or the
+	// GF_UNIFIED_ALERTING_REMOTE_ALERTMANAGER_UID environment variable.
+	RemoteAlertmanagerUID string
 }
 
 type RecordingRuleSettings struct {
@@ -607,7 +607,7 @@ func (cfg *Cfg) ReadUnifiedAlertingSettings(iniFile *ini.File) error {
 		uaCfg.BacktestingMaxEvaluations = 100
 	}
 
-	uaCfg.DatasourceSyncUID = ua.Key("datasource_sync_uid").MustString("")
+	uaCfg.RemoteAlertmanagerUID = ua.Key("remote_alertmanager_uid").MustString("")
 
 	cfg.UnifiedAlerting = uaCfg
 	return nil

@@ -2690,7 +2690,7 @@ var (
 			Expression:      "false",
 		},
 		{
-			Name:            "alertingDatasourceSync",
+			Name:            "alertingRemoteAlertmanagerConfigSync",
 			Description:     "Automatically sync Mimir Alertmanager datasource configuration as ExtraConfiguration in Grafana",
 			Stage:           FeatureStageExperimental,
 			Owner:           grafanaAlertingSquad,

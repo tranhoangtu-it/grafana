@@ -54,7 +54,6 @@ type RuleAccessControlService interface {
 
 // API handlers.
 type API struct {
-<<<<<<< HEAD
 	Cfg                   *setting.Cfg
 	DatasourceCache       datasources.CacheService
 	DatasourceService     datasources.DataSourceService

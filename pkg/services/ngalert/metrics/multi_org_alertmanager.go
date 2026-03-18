@@ -18,10 +18,10 @@ type MultiOrgAlertmanager struct {
 	ActiveConfigurations     prometheus.Gauge
 	DiscoveredConfigurations prometheus.Gauge
 
-	// DatasourceSyncTotal counts sync attempts by org and status (success|error).
-	DatasourceSyncTotal *prometheus.CounterVec
-	// DatasourceSyncDuration measures per-org sync duration in seconds.
-	DatasourceSyncDuration prometheus.Histogram
+	// RemoteAMConfigSyncTotal counts sync attempts by org and status (success|error).
+	RemoteAMConfigSyncTotal *prometheus.CounterVec
+	// RemoteAMConfigSyncDuration measures per-org sync duration in seconds.
+	RemoteAMConfigSyncDuration prometheus.Histogram
 
 	aggregatedMetrics *AlertmanagerAggregatedMetrics
 }
@@ -43,17 +43,17 @@ func NewMultiOrgAlertmanagerMetrics(r prometheus.Registerer) *MultiOrgAlertmanag
 			Name:      "active_configurations",
 			Help:      "The number of active Alertmanager configurations.",
 		}),
-		DatasourceSyncTotal: promauto.With(r).NewCounterVec(prometheus.CounterOpts{
+		RemoteAMConfigSyncTotal: promauto.With(r).NewCounterVec(prometheus.CounterOpts{
 			Namespace: Namespace,
 			Subsystem: Subsystem,
-			Name:      "datasource_sync_total",
-			Help:      "Total number of Mimir Alertmanager datasource sync attempts, partitioned by org and status.",
+			Name:      "remote_alertmanager_config_sync_total",
+			Help:      "Total number of remote Alertmanager config sync attempts, partitioned by org and status.",
 		}, []string{"org_id", "status"}),
-		DatasourceSyncDuration: promauto.With(r).NewHistogram(prometheus.HistogramOpts{
+		RemoteAMConfigSyncDuration: promauto.With(r).NewHistogram(prometheus.HistogramOpts{
 			Namespace: Namespace,
 			Subsystem: Subsystem,
-			Name:      "datasource_sync_duration_seconds",
-			Help:      "Duration of Mimir Alertmanager datasource sync operations in seconds.",
+			Name:      "remote_alertmanager_config_sync_duration_seconds",
+			Help:      "Duration of remote Alertmanager config sync operations in seconds.",
 			Buckets:   prometheus.DefBuckets,
 		}),
 		aggregatedMetrics: NewAlertmanagerAggregatedMetrics(registries),

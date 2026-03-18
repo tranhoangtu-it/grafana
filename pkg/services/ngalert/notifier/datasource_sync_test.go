@@ -48,7 +48,7 @@ func buildTestMOA(
 
 	var features featuremgmt.FeatureToggles
 	if featureEnabled {
-		features = featuremgmt.WithFeatures(featuremgmt.FlagAlertingDatasourceSync)
+		features = featuremgmt.WithFeatures(featuremgmt.FlagAlertingRemoteAMConfigSync)
 	} else {
 		features = featuremgmt.WithFeatures()
 	}
@@ -63,7 +63,7 @@ func buildTestMOA(
 			AlertmanagerConfigPollInterval: 3 * time.Minute,
 			DefaultConfiguration:           setting.GetAlertmanagerDefaultConfiguration(),
 			DisabledOrgs:                   disabledOrgs,
-			DatasourceSyncUID:              operatorUID,
+			RemoteAlertmanagerUID:              operatorUID,
 		},
 	}
 
@@ -173,9 +173,9 @@ func ptrTo[T any](v T) *T { return &v }
 
 func TestSyncDatasourceConfigs_NoUID_Skipped(t *testing.T) {
 	adminCfg := &mockAdminConfigStore{}
-	// Org 1 has no DatasourceSyncUID configured.
+	// Org 1 has no RemoteAlertmanagerUID configured.
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 1, DatasourceSyncUID: nil},
+		{OrgID: 1, RemoteAlertmanagerUID: nil},
 	}, nil)
 
 	dsSvc := &dsfakes.FakeDataSourceService{}
@@ -198,7 +198,7 @@ func TestSyncDatasourceConfigs_DBUIDUsed(t *testing.T) {
 
 	adminCfg := &mockAdminConfigStore{}
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 1, DatasourceSyncUID: ptrTo("mimir-uid-1")},
+		{OrgID: 1, RemoteAlertmanagerUID: ptrTo("mimir-uid-1")},
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
@@ -217,7 +217,7 @@ func TestSyncDatasourceConfigs_OperatorUIDOverridesDB(t *testing.T) {
 
 	adminCfg := &mockAdminConfigStore{}
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 1, DatasourceSyncUID: ptrTo("db-uid")},
+		{OrgID: 1, RemoteAlertmanagerUID: ptrTo("db-uid")},
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "operator-uid")
@@ -230,7 +230,7 @@ func TestSyncDatasourceConfigs_OperatorUIDOverridesDB(t *testing.T) {
 func TestSyncDatasourceConfigs_DisabledOrgSkipped(t *testing.T) {
 	adminCfg := &mockAdminConfigStore{}
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 5, DatasourceSyncUID: ptrTo("some-uid")},
+		{OrgID: 5, RemoteAlertmanagerUID: ptrTo("some-uid")},
 	}, nil)
 
 	dsSvc := &dsfakes.FakeDataSourceService{}
@@ -279,8 +279,8 @@ func TestSyncDatasourceConfigs_PerOrgErrorIsolation(t *testing.T) {
 
 	adminCfg := &mockAdminConfigStore{}
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 1, DatasourceSyncUID: ptrTo("ds-1")},
-		{OrgID: 2, DatasourceSyncUID: ptrTo("ds-2")},
+		{OrgID: 1, RemoteAlertmanagerUID: ptrTo("ds-1")},
+		{OrgID: 2, RemoteAlertmanagerUID: ptrTo("ds-2")},
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1, 2}, nil, adminCfg, dsSvc, true, "")
@@ -304,7 +304,7 @@ func TestSyncDatasourceConfigs_HTTPTimeout(t *testing.T) {
 
 	adminCfg := &mockAdminConfigStore{}
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 1, DatasourceSyncUID: ptrTo("slow-uid")},
+		{OrgID: 1, RemoteAlertmanagerUID: ptrTo("slow-uid")},
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")
@@ -322,7 +322,7 @@ func TestSyncDatasourceConfigs_HTTPTimeout(t *testing.T) {
 
 func TestSyncDatasourceConfigs_SuccessPath(t *testing.T) {
 	// The success path test verifies that:
-	// 1. syncDatasourceConfigs fetches from Mimir (the test server is hit)
+	// 1. syncRemoteAMConfigsForOrgs fetches from Mimir (the test server is hit)
 	// 2. No error is logged (no panic, clean return)
 	//
 	// SaveAndApplyExtraConfiguration lives on MultiOrgAlertmanager which applies the config
@@ -354,7 +354,7 @@ func TestSyncDatasourceConfigs_SuccessPath(t *testing.T) {
 
 	adminCfg := &mockAdminConfigStore{}
 	adminCfg.On("GetAdminConfigurations").Return([]*ngmodels.AdminConfiguration{
-		{OrgID: 1, DatasourceSyncUID: ptrTo("mimir-uid")},
+		{OrgID: 1, RemoteAlertmanagerUID: ptrTo("mimir-uid")},
 	}, nil)
 
 	moa := buildTestMOA(t, []int64{1}, nil, adminCfg, dsSvc, true, "")

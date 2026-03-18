@@ -137,7 +137,7 @@ func createAPIAdminSut(t *testing.T,
 
 func ptrTo[T any](v T) *T { return &v }
 
-func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
+func TestRemoteAlertmanagerUID_PostAndGet(t *testing.T) {
 	mimirDS := &datasources.DataSource{
 		UID:   "mimir-ds-uid",
 		OrgID: 1,
@@ -148,15 +148,15 @@ func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
 		}),
 	}
 
-	t.Run("POST with valid mimir datasource persists datasource_sync_uid", func(t *testing.T) {
+	t.Run("POST with valid mimir datasource persists remote_alertmanager_uid", func(t *testing.T) {
 		sut := createAPIAdminSut(t, []*datasources.DataSource{mimirDS},
-			featuremgmt.WithFeatures(featuremgmt.FlagAlertingDatasourceSync))
+			featuremgmt.WithFeatures(featuremgmt.FlagAlertingRemoteAMConfigSync))
 		ctx := createRequestCtxInOrg(1)
 		ctx.OrgRole = org.RoleAdmin
 
 		resp := sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo("mimir-ds-uid"),
+			RemoteAlertmanagerUID:   ptrTo("mimir-ds-uid"),
 		})
 		require.Equal(t, http.StatusCreated, resp.Status())
 
@@ -165,42 +165,42 @@ func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
 		require.Equal(t, http.StatusOK, getResp.Status())
 		var got definitions.GettableNGalertConfig
 		require.NoError(t, json.Unmarshal(getResp.Body(), &got))
-		require.Equal(t, "mimir-ds-uid", got.DatasourceSyncUID)
+		require.Equal(t, "mimir-ds-uid", got.RemoteAlertmanagerUID)
 	})
 
-	t.Run("POST with datasource_sync_uid empty clears it", func(t *testing.T) {
+	t.Run("POST with remote_alertmanager_uid empty clears it", func(t *testing.T) {
 		sut := createAPIAdminSut(t, []*datasources.DataSource{mimirDS},
-			featuremgmt.WithFeatures(featuremgmt.FlagAlertingDatasourceSync))
+			featuremgmt.WithFeatures(featuremgmt.FlagAlertingRemoteAMConfigSync))
 		ctx := createRequestCtxInOrg(1)
 		ctx.OrgRole = org.RoleAdmin
 
 		// First set it.
 		sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo("mimir-ds-uid"),
+			RemoteAlertmanagerUID:   ptrTo("mimir-ds-uid"),
 		})
 		// Then clear it.
 		resp := sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo(""),
+			RemoteAlertmanagerUID:   ptrTo(""),
 		})
 		require.Equal(t, http.StatusCreated, resp.Status())
 
 		getResp := sut.RouteGetNGalertConfig(ctx)
 		var got definitions.GettableNGalertConfig
 		require.NoError(t, json.Unmarshal(getResp.Body(), &got))
-		require.Empty(t, got.DatasourceSyncUID)
+		require.Empty(t, got.RemoteAlertmanagerUID)
 	})
 
 	t.Run("POST with non-existent datasource returns 400", func(t *testing.T) {
 		sut := createAPIAdminSut(t, []*datasources.DataSource{},
-			featuremgmt.WithFeatures(featuremgmt.FlagAlertingDatasourceSync))
+			featuremgmt.WithFeatures(featuremgmt.FlagAlertingRemoteAMConfigSync))
 		ctx := createRequestCtxInOrg(1)
 		ctx.OrgRole = org.RoleAdmin
 
 		resp := sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo("nonexistent-uid"),
+			RemoteAlertmanagerUID:   ptrTo("nonexistent-uid"),
 		})
 		require.Equal(t, http.StatusBadRequest, resp.Status())
 	})
@@ -214,13 +214,13 @@ func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
 			JsonData: simplejson.New(),
 		}
 		sut := createAPIAdminSut(t, []*datasources.DataSource{prometheusDS},
-			featuremgmt.WithFeatures(featuremgmt.FlagAlertingDatasourceSync))
+			featuremgmt.WithFeatures(featuremgmt.FlagAlertingRemoteAMConfigSync))
 		ctx := createRequestCtxInOrg(1)
 		ctx.OrgRole = org.RoleAdmin
 
 		resp := sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo("prom-uid"),
+			RemoteAlertmanagerUID:   ptrTo("prom-uid"),
 		})
 		require.Equal(t, http.StatusBadRequest, resp.Status())
 	})
@@ -236,13 +236,13 @@ func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
 			}),
 		}
 		sut := createAPIAdminSut(t, []*datasources.DataSource{vanillaAMDS},
-			featuremgmt.WithFeatures(featuremgmt.FlagAlertingDatasourceSync))
+			featuremgmt.WithFeatures(featuremgmt.FlagAlertingRemoteAMConfigSync))
 		ctx := createRequestCtxInOrg(1)
 		ctx.OrgRole = org.RoleAdmin
 
 		resp := sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo("vanilla-am"),
+			RemoteAlertmanagerUID:   ptrTo("vanilla-am"),
 		})
 		require.Equal(t, http.StatusBadRequest, resp.Status())
 	})
@@ -257,16 +257,16 @@ func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
 
 		resp := sut.RoutePostNGalertConfig(ctx, definitions.PostableNGalertConfig{
 			AlertmanagersChoice: ptrTo(definitions.InternalAlertmanager),
-			DatasourceSyncUID:   ptrTo("any-uid"),
+			RemoteAlertmanagerUID:   ptrTo("any-uid"),
 		})
 		require.Equal(t, http.StatusCreated, resp.Status())
 	})
 
-	t.Run("GET returns datasource_sync_uid from stored config", func(t *testing.T) {
+	t.Run("GET returns remote_alertmanager_uid from stored config", func(t *testing.T) {
 		adminStore := store.NewFakeAdminConfigStore(t)
 		adminStore.Configs[1] = &ngmodels.AdminConfiguration{
 			OrgID:             1,
-			DatasourceSyncUID: ptrTo("stored-uid"),
+			RemoteAlertmanagerUID: ptrTo("stored-uid"),
 		}
 		sut := ConfigSrv{
 			datasourceService: &fakeDatasources.FakeDataSourceService{},
@@ -280,6 +280,6 @@ func TestDatasourceSyncUID_PostAndGet(t *testing.T) {
 		require.Equal(t, http.StatusOK, getResp.Status())
 		var got definitions.GettableNGalertConfig
 		require.NoError(t, json.Unmarshal(getResp.Body(), &got))
-		require.Equal(t, "stored-uid", got.DatasourceSyncUID)
+		require.Equal(t, "stored-uid", got.RemoteAlertmanagerUID)
 	})
 }

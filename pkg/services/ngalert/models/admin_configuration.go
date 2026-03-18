@@ -26,9 +26,9 @@ type AdminConfiguration struct {
 	// SendAlertsTo indicates which set of alertmanagers will handle the alert.
 	SendAlertsTo *AlertmanagersChoice `xorm:"send_alerts_to"`
 
-	// DatasourceSyncUID is the UID of the Mimir/Cortex Alertmanager datasource whose
+	// RemoteAlertmanagerUID is the UID of the Mimir/Cortex Alertmanager datasource whose
 	// configuration should be synced into Grafana for this org. Empty means no sync.
-	DatasourceSyncUID *string `xorm:"datasource_sync_uid"`
+	RemoteAlertmanagerUID *string `xorm:"remote_alertmanager_uid"`
 
 	CreatedAt int64 `xorm:"created"`
 	UpdatedAt int64 `xorm:"updated"`
