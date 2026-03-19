@@ -8,7 +8,6 @@ import { selectors } from '@grafana/e2e-selectors';
 import { ClickOutsideWrapper } from '@grafana/ui';
 import { StoreState, ThunkDispatch } from 'app/types/store';
 
-import { VARIABLE_PREFIX } from '../../constants';
 import { isMulti } from '../../guard';
 import { getVariableQueryRunner } from '../../query/VariableQueryRunner';
 import { formatVariableLabel } from '../../shared/formatVariable';
@@ -128,7 +127,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
 
       return (
         <VariableLink
-          id={VARIABLE_PREFIX + variable.id}
+          id={sceneUtils.getVariableControlId(variable.state.type, variable.state.key)}
           text={linkText}
           onClick={this.onShowOptions}
           loading={loading}
@@ -147,7 +146,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
       return (
         <ClickOutsideWrapper onClick={this.onHideOptions}>
           <VariableInput
-            id={VARIABLE_PREFIX + id}
+            id={sceneUtils.getVariableControlId(this.props.variable.state.type, this.props.variable.state.key)}
             value={picker.queryValue}
             onChange={this.onFilterOrSearchOptions}
             onNavigate={this.onNavigate}
