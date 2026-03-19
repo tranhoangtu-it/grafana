@@ -163,7 +163,6 @@ func queryDatasources(w http.ResponseWriter, httpreq *http.Request, namespace st
 				}
 			}
 			connectLogger.Debug("responder sending status code", "statusCode", statusCode, "caller", getCaller(ctx))
-			b.reportStatus(ctx, *statusCode)
 		},
 
 		func(err error) {
@@ -175,19 +174,9 @@ func queryDatasources(w http.ResponseWriter, httpreq *http.Request, namespace st
 			}
 
 			span.RecordError(err)
-
-			statusCode := 0
-			var k8sErr *errorsK8s.StatusError
-			if errors.As(err, &k8sErr) {
-				statusCode = int(k8sErr.Status().Code)
-			} else {
-				// we do not know what kind of error it is,
-				// we do not know what status code will get assigned to it,
-				// so we use the zero to indicate the unknown.
-				connectLogger.Debug("Connect: unknown error returned", "error", err)
-			}
-			b.reportStatus(ctx, statusCode)
-		})
+		},
+		func(statusCode int) { b.reportStatus(ctx, statusCode) },
+	)
 
 	raw := &query.QueryDataRequest{}
 	err := web.Bind(httpreq, raw)
@@ -381,18 +370,20 @@ func handleQuery(
 }
 
 type responderWrapper struct {
-	w          http.ResponseWriter
-	ctx        context.Context
-	onObjectFn func(statusCode *int, obj runtime.Object)
-	onErrorFn  func(err error)
+	w            http.ResponseWriter
+	ctx          context.Context
+	onObjectFn   func(statusCode *int, obj runtime.Object)
+	onErrorFn    func(err error)
+	reportStatus func(statusCode int)
 }
 
-func newResponderWrapper(ctx context.Context, w http.ResponseWriter, onObjectFn func(statusCode *int, obj runtime.Object), onErrorFn func(err error)) *responderWrapper {
+func newResponderWrapper(ctx context.Context, w http.ResponseWriter, onObjectFn func(statusCode *int, obj runtime.Object), onErrorFn func(err error), reportStatus func(statusCode int)) *responderWrapper {
 	return &responderWrapper{
-		w:          w,
-		ctx:        ctx,
-		onObjectFn: onObjectFn,
-		onErrorFn:  onErrorFn,
+		w:            w,
+		ctx:          ctx,
+		onObjectFn:   onObjectFn,
+		onErrorFn:    onErrorFn,
+		reportStatus: reportStatus,
 	}
 }
 
@@ -407,6 +398,8 @@ func (r responderWrapper) Object(statusCode int, obj runtime.Object) {
 	if err := json.NewEncoder(r.w).Encode(obj); err != nil {
 		http.Error(r.w, err.Error(), http.StatusInternalServerError)
 	}
+
+	r.reportStatus(statusCode)
 }
 
 func (r responderWrapper) Error(err error) {
@@ -414,7 +407,8 @@ func (r responderWrapper) Error(err error) {
 		r.onErrorFn(err)
 	}
 
-	errhttp.Write(r.ctx, err, r.w)
+	statusCode := errhttp.Write(r.ctx, err, r.w)
+	r.reportStatus(statusCode)
 }
 
 func logEmptyRefids(queries []v0alpha1.DataQuery, logger log.Logger) {
