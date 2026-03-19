@@ -31,6 +31,7 @@ export function getOutput(env: Record<string, unknown> = {}) {
     path: resolve(import.meta.dirname, '../../public/build'),
     filename: env.production ? '[name].[contenthash].js' : '[name].js',
     cssFilename: env.production ? '[name].[contenthash].css' : '[name].css',
+    publicPath: 'auto',
   };
 }
 
@@ -135,7 +136,6 @@ export function getPlugins(env: Record<string, unknown> = {}) {
 }
 
 export function getExperiments(env: Record<string, unknown> = {}) {
-  // This doesn't work reliably right now so disabling.
   const cache: ExperimentCacheOptions = {
     buildDependencies: [import.meta.filename, join(import.meta.dirname, '../../tsconfig.json')],
     storage: {
