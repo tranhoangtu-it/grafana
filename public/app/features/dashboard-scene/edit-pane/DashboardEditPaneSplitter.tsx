@@ -12,7 +12,7 @@ import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { playlistSrv } from 'app/features/playlist/PlaylistSrv';
 import { KioskMode } from 'app/types/dashboard';
 
-import { useIsMobile } from '../../../../../packages/grafana-ui/src/components/Sidebar/useSidebar';
+import { useIsMobile } from '../../../../../packages/grafana-ui/src/utils/useIsMobile';
 import { getAssistantViewModeStyles, useDashboardAssistantViewMode } from '../assistant/DashboardAssistantViewMode';
 import { ViewModePanelPromptCard } from '../assistant/ViewModePanelPromptCard';
 import { DashboardScene } from '../scene/DashboardScene';
