@@ -7,7 +7,7 @@ import { DashboardJson } from 'app/features/manage-dashboards/types';
 import { CommunityDashboardSection } from './CommunityDashboardSection';
 import { checkDashboardCompatibility, CompatibilityCheckResult } from './api/compatibilityApi';
 import { fetchCommunityDashboards } from './api/dashboardLibraryApi';
-import { DashboardLibraryInteractions } from './interactions';
+import { DashboardLibraryInteractions, SuggestedDashboardInteractions } from './interactions';
 import { GnetDashboard } from './types';
 import { onUseCommunityDashboard, interpolateDashboardForCompatibilityCheck } from './utils/communityDashboardHelpers';
 
@@ -60,6 +60,9 @@ const mockInterpolateDashboard = interpolateDashboardForCompatibilityCheck as je
   typeof interpolateDashboardForCompatibilityCheck
 >;
 const mockCheckCompatibility = checkDashboardCompatibility as jest.MockedFunction<typeof checkDashboardCompatibility>;
+const mockSuggestedDashboardInteractionsItemClicked = SuggestedDashboardInteractions.itemClicked as jest.MockedFunction<
+  typeof SuggestedDashboardInteractions.itemClicked
+>;
 
 const createMockGnetDashboard = (overrides: Partial<GnetDashboard> = {}): GnetDashboard => ({
   id: 1,
@@ -196,6 +199,27 @@ describe('CommunityDashboardSection', () => {
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error loading community dashboards', expect.any(Error));
     consoleErrorSpy.mockRestore();
+  });
+
+  it('should track action: use_dashboard when the view dashboard button is clicked', async () => {
+    mockFetchCommunityDashboards.mockResolvedValue({
+      page: 1,
+      pages: 5,
+      items: [createMockGnetDashboard()],
+    });
+    mockInterpolateDashboard.mockResolvedValue(createMockDashboardJson());
+    mockCheckCompatibility.mockResolvedValue(createMockCompatibilityResult());
+    mockOnUseCommunityDashboard.mockResolvedValue(undefined);
+
+    const { user } = await setup();
+
+    await user.click(screen.getByRole('button', { name: 'View dashboard: Test Dashboard' }));
+
+    await waitFor(() => {
+      expect(mockSuggestedDashboardInteractionsItemClicked).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'use_dashboard' })
+      );
+    });
   });
 
   describe('Compatibility Badge Feature', () => {

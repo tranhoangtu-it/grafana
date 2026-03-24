@@ -3,6 +3,7 @@ import { render } from 'test/test-utils';
 
 import { SuggestedDashboards } from './SuggestedDashboards';
 import { fetchCommunityDashboards, fetchProvisionedDashboards } from './api/dashboardLibraryApi';
+import { SuggestedDashboardInteractions } from './interactions';
 import { createMockGnetDashboard, createMockPluginDashboard } from './utils/test-utils';
 
 jest.mock('./api/dashboardLibraryApi', () => ({
@@ -67,6 +68,9 @@ const mockFetchProvisionedDashboards = fetchProvisionedDashboards as jest.Mocked
   typeof fetchProvisionedDashboards
 >;
 const mockFetchCommunityDashboards = fetchCommunityDashboards as jest.MockedFunction<typeof fetchCommunityDashboards>;
+const mockSuggestedDashboardInteractionsItemClicked = SuggestedDashboardInteractions.itemClicked as jest.MockedFunction<
+  typeof SuggestedDashboardInteractions.itemClicked
+>;
 
 describe('SuggestedDashboards', () => {
   beforeEach(() => {
@@ -185,6 +189,42 @@ describe('SuggestedDashboards', () => {
       expect(
         screen.getByText('Browse and select from data-source provided or community dashboards')
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('interaction tracking', () => {
+    it('should track action: use_dashboard when a provisioned dashboard card is clicked', async () => {
+      const provisionedDashboard = createMockPluginDashboard({ title: 'Provisioned Dashboard' });
+      mockFetchProvisionedDashboards.mockResolvedValue([provisionedDashboard]);
+      mockFetchCommunityDashboards.mockResolvedValue({ page: 1, pages: 1, items: [] });
+
+      const { user } = render(<SuggestedDashboards datasourceUid="test-uid" />);
+
+      const card = await screen.findByTestId('dashboard-card-Provisioned Dashboard');
+      await user.click(card);
+
+      expect(mockSuggestedDashboardInteractionsItemClicked).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'use_dashboard' })
+      );
+    });
+
+    it('should track action: use_dashboard when a community dashboard card is clicked', async () => {
+      mockSuggestedDashboardInteractionsItemClicked.mockResolvedValue(undefined);
+
+      const communityDashboard = createMockGnetDashboard({ name: 'Community Dashboard' });
+      mockFetchProvisionedDashboards.mockResolvedValue([]);
+      mockFetchCommunityDashboards.mockResolvedValue({ page: 1, pages: 1, items: [communityDashboard] });
+
+      const { user } = render(<SuggestedDashboards datasourceUid="test-uid" />);
+
+      const card = await screen.findByTestId('dashboard-card-Community Dashboard');
+      await user.click(card);
+
+      await waitFor(() => {
+        expect(mockSuggestedDashboardInteractionsItemClicked).toHaveBeenCalledWith(
+          expect.objectContaining({ action: 'use_dashboard' })
+        );
+      });
     });
   });
 });
