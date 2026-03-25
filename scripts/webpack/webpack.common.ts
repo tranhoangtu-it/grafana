@@ -1,22 +1,29 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const path = require('path');
-const webpack = require('webpack');
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import webpack, { type Configuration } from 'webpack';
 
-const CorsWorkerPlugin = require('./plugins/CorsWorkerPlugin');
+import CorsWorkerPlugin from './plugins/CorsWorkerPlugin.ts';
 
-module.exports = (env = {}) => ({
+const require = createRequire(import.meta.url);
+
+export type Env = Record<string, string | true | undefined>;
+
+export default (env: Env = {}): Configuration => ({
   target: 'web',
   entry: {
     app: './public/app/index.ts',
     swagger: './public/swagger/index.tsx',
+    dark: './public/sass/grafana.dark.scss',
+    light: './public/sass/grafana.light.scss',
   },
   experiments: {
     // Required to load WASM modules.
     asyncWebAssembly: true,
   },
   output: {
-    clean: env.react19 ? false : true,
-    path: path.resolve(__dirname, '../../public/build'),
+    clean: !env.react19,
+    path: path.resolve(import.meta.dirname, '../../public/build'),
     filename: env.react19 ? '[name]-react19.[contenthash].js' : '[name].[contenthash].js',
     // Keep publicPath relative for host.com/grafana/ deployments
     publicPath: 'public/build/',
@@ -85,18 +92,9 @@ module.exports = (env = {}) => ({
     }),
     new CopyWebpackPlugin({
       patterns: [
-        {
-          from: 'public/img',
-          to: 'img',
-        },
-        {
-          from: 'public/maps',
-          to: 'maps',
-        },
-        {
-          from: 'public/gazetteer',
-          to: 'gazetteer',
-        },
+        { from: 'public/img', to: 'img' },
+        { from: 'public/maps', to: 'maps' },
+        { from: 'public/gazetteer', to: 'gazetteer' },
       ],
     }),
   ],
