@@ -1745,4 +1745,9 @@ export interface FeatureToggles {
   * @default false
   */
   queryFetchConfigFromSettingsService?: boolean;
+  /**
+  * Enables heatmap visualization support for Pyroscope profiles
+  * @default false
+  */
+  profilesHeatmap?: boolean;
 }
