@@ -66,8 +66,11 @@ type Store interface {
 	GetPermissionIDByRoleName(ctx context.Context, orgID int64, roleName string) (int64, error)
 }
 
-func New(cfg *setting.Cfg,
-	options Options, features featuremgmt.FeatureToggles, router routing.RouteRegister, license licensing.Licensing,
+// NewService creates a resource permissions service without registering any HTTP routes.
+// Use this when you want to register custom routes (e.g. datasource-specific endpoints).
+// Use New() instead when the default generic routes are sufficient.
+func NewService(cfg *setting.Cfg,
+	options Options, features featuremgmt.FeatureToggles, license licensing.Licensing,
 	ac accesscontrol.AccessControl, service accesscontrol.Service, sqlStore db.DB,
 	teamService team.Service, userService user.Service, actionSetService ActionSetService,
 ) (*Service, error) {
@@ -107,12 +110,24 @@ func New(cfg *setting.Cfg,
 		actionSetSvc: actionSetService,
 	}
 
-	s.api = newApi(cfg, ac, router, s, features, s.options.RestConfigProvider)
-
 	if err := s.declareFixedRoles(); err != nil {
 		return nil, err
 	}
 
+	return s, nil
+}
+
+func New(cfg *setting.Cfg,
+	options Options, features featuremgmt.FeatureToggles, router routing.RouteRegister, license licensing.Licensing,
+	ac accesscontrol.AccessControl, service accesscontrol.Service, sqlStore db.DB,
+	teamService team.Service, userService user.Service, actionSetService ActionSetService,
+) (*Service, error) {
+	s, err := NewService(cfg, options, features, license, ac, service, sqlStore, teamService, userService, actionSetService)
+	if err != nil {
+		return nil, err
+	}
+
+	s.api = newApi(cfg, ac, router, s, features, s.options.RestConfigProvider)
 	s.api.registerEndpoints()
 
 	return s, nil

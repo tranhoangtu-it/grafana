@@ -27,6 +27,7 @@ type Store interface {
 	GetDataSource(context.Context, *datasources.GetDataSourceQuery) (*datasources.DataSource, error)
 	GetDataSourceInNamespace(context.Context, string, string, string) (*datasources.DataSource, error)
 	GetDataSources(context.Context, *datasources.GetDataSourcesQuery) ([]*datasources.DataSource, error)
+	GetDataSourcesByUID(context.Context, *datasources.GetDataSourcesByUIDQuery) ([]*datasources.DataSource, error)
 	GetDataSourcesByType(context.Context, *datasources.GetDataSourcesByTypeQuery) ([]*datasources.DataSource, error)
 	DeleteDataSource(context.Context, *datasources.DeleteDataSourceCommand) error
 	AddDataSource(context.Context, *datasources.AddDataSourceCommand) (*datasources.DataSource, error)
@@ -78,6 +79,7 @@ func (ss *SqlStore) getDataSource(_ context.Context, query *datasources.GetDataS
 		UID:   query.UID,
 		Name:  query.Name, // nolint:staticcheck
 		ID:    query.ID,   // nolint:staticcheck
+		Type:  query.Type,
 	}
 	has, err := sess.Get(datasource)
 
@@ -140,6 +142,18 @@ func (ss *SqlStore) GetDataSources(ctx context.Context, query *datasources.GetDa
 		}
 
 		return sess.Find(&dataSources)
+	})
+}
+
+// GetDataSourcesByUID returns all data sources for org_id and uid
+func (ss *SqlStore) GetDataSourcesByUID(ctx context.Context, query *datasources.GetDataSourcesByUIDQuery) ([]*datasources.DataSource, error) {
+	if query.OrgID == 0 || query.UID == "" {
+		return nil, datasources.ErrDataSourceIdentifierNotSet
+	}
+
+	var dataSources []*datasources.DataSource
+	return dataSources, ss.db.WithDbSession(ctx, func(sess *db.Session) error {
+		return sess.Where("org_id = ? AND uid = ?", query.OrgID, query.UID).Asc("id").Find(&dataSources)
 	})
 }
 

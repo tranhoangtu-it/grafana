@@ -407,6 +407,36 @@ func TestIntegrationDataAccess(t *testing.T) {
 		})
 	})
 
+	t.Run("GetDataSourcesByUID", func(t *testing.T) {
+		t.Run("returns ErrDataSourceIdentifierNotSet when org or uid is missing", func(t *testing.T) {
+			db := db.InitTestDB(t)
+			ss := SqlStore{db: db, logger: log.NewNopLogger()}
+			_, err := ss.GetDataSourcesByUID(context.Background(), &datasources.GetDataSourcesByUIDQuery{OrgID: 0, UID: "x"})
+			require.ErrorIs(t, err, datasources.ErrDataSourceIdentifierNotSet)
+			_, err = ss.GetDataSourcesByUID(context.Background(), &datasources.GetDataSourcesByUIDQuery{OrgID: 10, UID: ""})
+			require.ErrorIs(t, err, datasources.ErrDataSourceIdentifierNotSet)
+		})
+
+		t.Run("returns one datasource when uid exists", func(t *testing.T) {
+			db := db.InitTestDB(t)
+			ss := SqlStore{db: db, logger: log.NewNopLogger()}
+			ds := initDatasource(db)
+			out, err := ss.GetDataSourcesByUID(context.Background(), &datasources.GetDataSourcesByUIDQuery{OrgID: 10, UID: ds.UID})
+			require.NoError(t, err)
+			require.Len(t, out, 1)
+			require.Equal(t, ds.ID, out[0].ID)
+		})
+
+		t.Run("returns empty slice when uid not found", func(t *testing.T) {
+			db := db.InitTestDB(t)
+			ss := SqlStore{db: db, logger: log.NewNopLogger()}
+			_ = initDatasource(db)
+			out, err := ss.GetDataSourcesByUID(context.Background(), &datasources.GetDataSourcesByUIDQuery{OrgID: 10, UID: "nonexistent-uid-xyz"})
+			require.NoError(t, err)
+			require.Len(t, out, 0)
+		})
+	})
+
 	t.Run("GetDataSourceInGroup", func(t *testing.T) {
 		t.Run("Only returns datasource of specified type", func(t *testing.T) {
 			db := db.InitTestDB(t)

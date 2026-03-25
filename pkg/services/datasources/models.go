@@ -260,6 +260,13 @@ type GetDataSourcesByTypeQuery struct {
 	AliasIDs []string
 }
 
+// GetDataSourcesByUIDQuery lists every data source in an org with the given UID (no LIMIT).
+// Used when callers must detect multiple rows for the same UID (e.g. across plugin types).
+type GetDataSourcesByUIDQuery struct {
+	OrgID int64
+	UID   string
+}
+
 // GetDataSourceQuery will get a DataSource based on OrgID as well as the UID (preferred), ID, or Name.
 // At least one of the UID, ID, or Name properties must be set in addition to OrgID.
 type GetDataSourceQuery struct {
@@ -274,6 +281,10 @@ type GetDataSourceQuery struct {
 
 	// Required
 	OrgID int64
+
+	// Type is the datasource plugin type (e.g. "prometheus", "loki").
+	// When set alongside UID, it scopes the lookup to that specific type.
+	Type string
 }
 
 type DatasourcesPermissionFilterQuery struct {
