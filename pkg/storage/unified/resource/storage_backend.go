@@ -1985,7 +1985,6 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 				})
 				continue
 			}
-			seenCreates[createID] = true
 		case resourcepb.WatchEvent_MODIFIED:
 			action = DataActionUpdated
 		case resourcepb.WatchEvent_DELETED:
@@ -2029,6 +2028,13 @@ func (b *kvStorageBackend) ProcessBulk(ctx context.Context, setting BulkSettings
 				Error:  fmt.Sprintf("invalid data key: %s", err),
 			})
 			continue
+		}
+
+		// Mark creates as seen only after all validation passes, so a rejected
+		// item doesn't block future valid ADDEDs for the same resource.
+		if action == DataActionCreated {
+			createID := req.Key.Group + "/" + req.Key.Resource + "/" + req.Key.Namespace + "/" + req.Key.Name
+			seenCreates[createID] = true
 		}
 
 		pending = append(pending, pendingItem{dataKey: dataKey, value: req.Value, obj: obj, action: action})
