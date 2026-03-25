@@ -13,6 +13,7 @@ import { useLabelsBreakdown } from '../useLabelsBreakdown';
 import { addOrReplaceFilter, removeFilter, useFilterValue, useQueryFilter } from '../utils';
 
 import { AllLabelsContent } from './LabelsContent';
+import { SeverityFilter } from './SeverityFilter';
 
 export const LABELS_COLUMN_WIDTH = 250;
 const COLLAPSED_WIDTH = 36;
@@ -59,6 +60,13 @@ export function LabelsColumn() {
                 <Trans i18nKey="alerting.triage.state-filter-title">State</Trans>
               </Text>
               <StateFilter />
+            </div>
+            <div className={styles.divider} />
+            <div className={styles.section}>
+              <Text weight="medium" variant="bodySmall" color="secondary">
+                <Trans i18nKey="alerting.triage.severity-filter-title">Severity</Trans>
+              </Text>
+              <SeverityFilter labels={labels} />
             </div>
             <div className={styles.divider} />
             <div className={styles.labelsSectionHeader}>
