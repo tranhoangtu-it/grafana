@@ -1,6 +1,7 @@
 import { attempt, compact, isString } from 'lodash';
 import memoize from 'micro-memoize';
 
+import { USER_DEFINED_TREE_NAME } from '@grafana/alerting';
 import { Matcher } from 'app/plugins/datasource/alertmanager/types';
 import { PromRuleDTO, PromRuleGroupDTO } from 'app/types/unified-alerting-dto';
 
@@ -210,12 +211,25 @@ export function policyFilter(rule: PromRuleDTO, filterState: RulesFilter): boole
       return false;
     }
 
-    if (!rule.notificationSettings) {
-      return false;
-    }
+    const isDefaultPolicyFilter = filterState.policy === USER_DEFINED_TREE_NAME;
 
-    if (filterState.policy !== rule.notificationSettings.policy) {
-      return false;
+    if (isDefaultPolicyFilter) {
+      // Rules with no notificationSettings or with policy routing to the default tree
+      // are implicitly routed through the default policy. Rules using contact point
+      // routing (receiver set) should not match.
+      if (rule.notificationSettings?.receiver) {
+        return false;
+      }
+      if (rule.notificationSettings?.policy && rule.notificationSettings.policy !== USER_DEFINED_TREE_NAME) {
+        return false;
+      }
+    } else {
+      if (!rule.notificationSettings) {
+        return false;
+      }
+      if (filterState.policy !== rule.notificationSettings.policy) {
+        return false;
+      }
     }
   }
 
