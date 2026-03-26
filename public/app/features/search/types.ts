@@ -1,5 +1,3 @@
-import { Action } from 'redux';
-
 import { WithAccessControlMetadata } from '@grafana/data';
 
 import { ManagerKind } from '../apiserver/types';
@@ -92,15 +90,13 @@ export interface DashboardViewItem {
   };
 }
 
-export interface SearchAction extends Action {
-  payload?: any;
-}
-
 export type EventTrackingNamespace = 'manage_dashboards' | 'dashboard_search';
 
 export interface SearchState {
   query: string;
   tag: string[];
+  // Owner of the folder. Currently, there can be only teams, so the format of each ref
+  // is "iam.grafana.app/Team/{teamUID}"
   ownerReference?: string[];
   starred: boolean;
   explain?: boolean; // adds debug info
@@ -118,8 +114,6 @@ export interface SearchState {
   deleted: boolean;
 }
 
-export type OnToggleChecked = (item: DashboardViewItem) => void;
-
 export enum SearchLayout {
   List = 'list',
   Folders = 'folders',
@@ -135,6 +129,3 @@ export interface SearchQueryParams {
   folder?: string | null;
   createdBy?: string | null;
 }
-
-// new Search Types
-export type OnMoveOrDeleleSelectedItems = () => void;

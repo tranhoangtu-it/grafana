@@ -11,6 +11,7 @@ import { TagFilter, TermCount } from 'app/core/components/TagFilter/TagFilter';
 import { contextSrv } from 'app/core/services/context_srv';
 
 import { SearchLayout, SearchState } from '../../types';
+import { needsListLayout } from '../../utils';
 
 import { OwnersFilter } from './OwnersFilter';
 
@@ -48,10 +49,8 @@ function getValidQueryLayout(q: SearchState): SearchLayout {
   const layout = q.layout ?? SearchLayout.Folders;
 
   // Folders is not valid when a query exists
-  if (layout === SearchLayout.Folders) {
-    if (q.query || q.sort || q.starred || q.tag.length > 0 || q.createdBy || q.ownerReference?.length) {
-      return SearchLayout.List;
-    }
+  if (layout === SearchLayout.Folders && needsListLayout(q)) {
+    return SearchLayout.List;
   }
 
   return layout;
@@ -82,16 +81,7 @@ export const ActionRow = ({
   const showCreatedByMeSearchFilter = isCreatedByMeSearchFilterEnabled && config.featureToggles.unifiedStorageSearchUI;
 
   // Disabled folder layout option when query is present
-  const disabledOptions =
-    state.tag.length ||
-    state.ownerReference?.length ||
-    state.starred ||
-    state.query ||
-    state.datasource ||
-    state.panel_type ||
-    state.createdBy
-      ? [SearchLayout.Folders]
-      : [];
+  const disabledOptions = needsListLayout(state) ? [SearchLayout.Folders] : [];
 
   const createdByMe = `user:${contextSrv.user.uid}`;
   const isFilteredByMe = state.createdBy === createdByMe;

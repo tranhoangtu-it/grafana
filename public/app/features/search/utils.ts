@@ -44,9 +44,9 @@ export const parseRouteParams = (params: UrlQueryMap) => {
     if (!val) {
       return obj;
     } else if (key === 'tag' && !Array.isArray(val)) {
-      return { ...obj, tag: [val] };
+      return { ...obj, tag: [val.toString()] };
     } else if (key === 'ownerReference' && !Array.isArray(val)) {
-      return { ...obj, ownerReference: [val] };
+      return { ...obj, ownerReference: [val.toString()] };
     }
 
     return { ...obj, [key]: val };
@@ -62,3 +62,9 @@ export const parseRouteParams = (params: UrlQueryMap) => {
 
   return { ...cleanedParams };
 };
+
+// If we have filter, we can only show the results in the list layout as the tree layout does not work well
+// with filtering.
+export function needsListLayout(q: Partial<SearchState>) {
+  return q.query || q.sort || q.starred || q.tag?.length || q.createdBy || q.ownerReference?.length || q.panel_type;
+}

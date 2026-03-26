@@ -16,7 +16,7 @@ import {
 import { getGrafanaSearcher } from '../service/searcher';
 import { SearchQuery } from '../service/types';
 import { SearchLayout, SearchQueryParams, SearchState } from '../types';
-import { parseRouteParams } from '../utils';
+import { needsListLayout, parseRouteParams } from '../utils';
 
 export const initialState: SearchState = {
   query: '',
@@ -60,13 +60,7 @@ export class SearchStateManager extends StateManagerBase<SearchState> {
     const stateFromUrl = parseRouteParams(locationService.getSearchObject());
 
     // Force list view when conditions are specified from the URL
-    if (
-      stateFromUrl.query ||
-      stateFromUrl.datasource ||
-      stateFromUrl.panel_type ||
-      stateFromUrl.createdBy ||
-      stateFromUrl.ownerReference?.length
-    ) {
+    if (needsListLayout(stateFromUrl)) {
       stateFromUrl.layout = SearchLayout.List;
     }
 

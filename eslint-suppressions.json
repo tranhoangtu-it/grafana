@@ -2687,11 +2687,6 @@
       "count": 16
     }
   },
-  "public/app/features/search/types.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
   "public/app/features/search/utils.ts": {
     "no-restricted-syntax": {
       "count": 3
