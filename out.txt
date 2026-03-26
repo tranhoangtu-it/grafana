@@ -1,0 +1,835 @@
+go install cuelang.org/go/cmd/cue@v0.16.0
+Fixing: .
+Fixing: ./apps/alerting/historian/kinds
+Fixing: ./apps/alerting/rules/kinds
+Fixing: ./apps/alerting/notifications/kinds
+Fixing: ./apps/advisor/kinds
+Fixing: ./apps/preferences/kinds
+Fixing: ./apps/playlist/kinds
+Fixing: ./apps/plugins/kinds
+Fixing: ./apps/example/kinds
+Fixing: ./apps/quotas/kinds
+Fixing: ./apps/folder/kinds
+Fixing: ./apps/logsdrilldown/kinds
+Fixing: ./apps/provisioning/kinds
+Fixing: ./apps/annotation/kinds
+Fixing: ./apps/dashvalidator/kinds
+Fixing: ./apps/dashboard/kinds
+Fixing: ./apps/iam/kinds
+Fixing: ./apps/live/kinds
+Fixing: ./apps/shorturl/kinds
+Fixing: ./apps/secret/kinds
+Fixing: ./apps/collections/kinds
+Fixing: ./apps/correlations/kinds
+Fixing: ./pkg/extensions/apis/usageinsights/kinds
+Fixing: ./pkg/extensions/apps/querycaching/kinds
+Fixing: ./pkg/extensions/apps/dsabstraction/kinds
+Fixing: ./pkg/services/apiserver/builder/runner/testdata/app/kinds
+Installing Grafana App SDK version e54bc3b
+# The only way to install specific versions of binaries using `go install`
+# is by setting GOBIN to the directory you want to install the binary to.
+GOBIN=/Users/alejandromalavet/go/1.26.0/bin/app-sdk-e54bc3b go install github.com/grafana/grafana-app-sdk/cmd/grafana-app-sdk@e54bc3b
+/Users/alejandromalavet/GitHub/grafana/apps/advisor
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/advisor/v0alpha1/check_codec_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/check_object_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/check_schema_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/check_spec_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/check_status_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/checktype_codec_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/checktype_object_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/checktype_schema_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/checktype_spec_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/checktype_status_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/constants.go
+ * Writing file pkg/apis/advisor/v0alpha1/check_client_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/checktype_client_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/client_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/createregister_response_body_types_gen.go
+ * Writing file pkg/apis/advisor/v0alpha1/createregister_response_object_types_gen.go
+ * Writing file pkg/apis/advisor_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/alerting/historian
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/constants.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_codec_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_object_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_schema_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_spec_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_status_gen.go
+ * Writing file plugin/src/generated/dummy/v0alpha1/dummy_object_gen.ts
+ * Writing file plugin/src/generated/dummy/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/dummy/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/dummy/v0alpha1/types.status.gen.ts
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/client_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/createnotificationquery_request_body_types_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/createnotificationquery_response_types_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/createnotificationsqueryalerts_request_body_types_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/createnotificationsqueryalerts_response_types_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_client_gen.go
+ * Writing file pkg/apis/alertinghistorian/v0alpha1/getalertstatehistory_response_types_gen.go
+ * Writing file pkg/apis/alertinghistorian_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/alerting/notifications
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/constants.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/inhibitionrule_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/inhibitionrule_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/inhibitionrule_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/inhibitionrule_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/routingtree_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/routingtree_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/routingtree_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/routingtree_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/templategroup_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/templategroup_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/templategroup_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/templategroup_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/timeinterval_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/timeinterval_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/timeinterval_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/timeinterval_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/constants.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/inhibitionrule_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/inhibitionrule_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/inhibitionrule_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/inhibitionrule_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/routingtree_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/routingtree_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/routingtree_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/routingtree_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/templategroup_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/templategroup_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/templategroup_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/templategroup_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/timeinterval_codec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/timeinterval_object_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/timeinterval_schema_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/timeinterval_spec_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/getintegrationtypeschemas_response_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/inhibitionrule_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_createreceiverintegrationtest_request_body_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_createreceiverintegrationtest_response_body_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/receiver_createreceiverintegrationtest_response_object_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/routingtree_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/templategroup_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v0alpha1/timeinterval_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/getintegrationtypeschemas_response_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/inhibitionrule_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_createreceiverintegrationtest_request_body_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_createreceiverintegrationtest_response_body_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/receiver_createreceiverintegrationtest_response_object_types_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/routingtree_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/templategroup_client_gen.go
+ * Writing file pkg/apis/alertingnotifications/v1beta1/timeinterval_client_gen.go
+ * Writing file pkg/apis/alertingnotifications_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/alerting/rules
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/alerting/v0alpha1/alertrule_codec_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/alertrule_object_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/alertrule_schema_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/alertrule_spec_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/alertrule_status_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/constants.go
+ * Writing file pkg/apis/alerting/v0alpha1/recordingrule_codec_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/recordingrule_object_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/recordingrule_schema_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/recordingrule_spec_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/recordingrule_status_gen.go
+ * Writing file plugin/src/generated/alertrule/v0alpha1/alertrule_object_gen.ts
+ * Writing file plugin/src/generated/alertrule/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/alertrule/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/alertrule/v0alpha1/types.status.gen.ts
+ * Writing file plugin/src/generated/recordingrule/v0alpha1/recordingrule_object_gen.ts
+ * Writing file plugin/src/generated/recordingrule/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/recordingrule/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/recordingrule/v0alpha1/types.status.gen.ts
+ * Writing file definitions/alertrule.rules.alerting.grafana.app.yaml
+ * Writing file definitions/recordingrule.rules.alerting.grafana.app.yaml
+ * Writing file definitions/alerting-manifest.yaml
+ * Writing file pkg/apis/alerting/v0alpha1/alertrule_client_gen.go
+ * Writing file pkg/apis/alerting/v0alpha1/recordingrule_client_gen.go
+ * Writing file pkg/apis/alerting_manifest.go
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1,AlertRuleV0alpha1SpecNotificationSettings,ActiveTimeIntervals
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1,AlertRuleV0alpha1SpecNotificationSettings,GroupBy
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1,AlertRuleV0alpha1SpecNotificationSettings,MuteTimeIntervals
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1,AlertRuleList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1,RecordingRuleList,ListMeta
+ * Writing file pkg/apis/alerting/v0alpha1/zz_openapi_gen.go
+/Users/alejandromalavet/GitHub/grafana/apps/annotation
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/annotation/v0alpha1/annotation_codec_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/annotation_object_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/annotation_schema_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/annotation_spec_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/annotation_status_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/constants.go
+ * Writing file plugin/src/generated/annotation/v0alpha1/annotation_object_gen.ts
+ * Writing file plugin/src/generated/annotation/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/annotation/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/annotation/v0alpha1/types.status.gen.ts
+ * Writing file pkg/apis/annotation/v0alpha1/annotation_client_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/client_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/getsearch_response_body_types_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/getsearch_response_object_types_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/gettags_response_body_types_gen.go
+ * Writing file pkg/apis/annotation/v0alpha1/gettags_response_object_types_gen.go
+ * Writing file pkg/apis/annotation_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/collections
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/collections/v1alpha1/constants.go
+ * Writing file pkg/apis/collections/v1alpha1/stars_codec_gen.go
+ * Writing file pkg/apis/collections/v1alpha1/stars_object_gen.go
+ * Writing file pkg/apis/collections/v1alpha1/stars_schema_gen.go
+ * Writing file pkg/apis/collections/v1alpha1/stars_spec_gen.go
+ * Writing file pkg/apis/collections/v1alpha1/stars_client_gen.go
+ * Writing file pkg/apis/manifestdata/collections_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/correlations
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/correlation/v0alpha1/constants.go
+ * Writing file pkg/apis/correlation/v0alpha1/correlation_codec_gen.go
+ * Writing file pkg/apis/correlation/v0alpha1/correlation_object_gen.go
+ * Writing file pkg/apis/correlation/v0alpha1/correlation_schema_gen.go
+ * Writing file pkg/apis/correlation/v0alpha1/correlation_spec_gen.go
+ * Writing file plugin/src/generated/correlation/v0alpha1/correlation_object_gen.ts
+ * Writing file plugin/src/generated/correlation/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/correlation/v0alpha1/types.spec.gen.ts
+ * Writing file pkg/apis/correlation/v0alpha1/correlation_client_gen.go
+ * Writing file pkg/apis/correlation_manifest.go
+# Fix the TargetSpec schema in manifest - remove nested additionalProperties
+/Users/alejandromalavet/GitHub/grafana/apps/dashboard
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/dashboard/v0alpha1/constants.go
+ * Writing file pkg/apis/dashboard/v0alpha1/dashboard_codec_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/dashboard_object_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/dashboard_schema_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/dashboard_spec_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/dashboard_status_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/snapshot_codec_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/snapshot_object_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/snapshot_schema_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/snapshot_spec_gen.go
+ * Writing file pkg/apis/dashboard/v1/constants.go
+ * Writing file pkg/apis/dashboard/v1/dashboard_codec_gen.go
+ * Writing file pkg/apis/dashboard/v1/dashboard_object_gen.go
+ * Writing file pkg/apis/dashboard/v1/dashboard_schema_gen.go
+ * Writing file pkg/apis/dashboard/v1/dashboard_spec_gen.go
+ * Writing file pkg/apis/dashboard/v1/dashboard_status_gen.go
+ * Writing file pkg/apis/dashboard/v1beta1/constants.go
+ * Writing file pkg/apis/dashboard/v1beta1/dashboard_codec_gen.go
+ * Writing file pkg/apis/dashboard/v1beta1/dashboard_object_gen.go
+ * Writing file pkg/apis/dashboard/v1beta1/dashboard_schema_gen.go
+ * Writing file pkg/apis/dashboard/v1beta1/dashboard_spec_gen.go
+ * Writing file pkg/apis/dashboard/v1beta1/dashboard_status_gen.go
+ * Writing file pkg/apis/dashboard/v2/constants.go
+ * Writing file pkg/apis/dashboard/v2/dashboard_codec_gen.go
+ * Writing file pkg/apis/dashboard/v2/dashboard_object_gen.go
+ * Writing file pkg/apis/dashboard/v2/dashboard_schema_gen.go
+ * Writing file pkg/apis/dashboard/v2/dashboard_spec_gen.go
+ * Writing file pkg/apis/dashboard/v2/dashboard_status_gen.go
+ * Writing file pkg/apis/dashboard/v2alpha1/constants.go
+ * Writing file pkg/apis/dashboard/v2alpha1/dashboard_codec_gen.go
+ * Writing file pkg/apis/dashboard/v2alpha1/dashboard_object_gen.go
+ * Writing file pkg/apis/dashboard/v2alpha1/dashboard_schema_gen.go
+ * Writing file pkg/apis/dashboard/v2alpha1/dashboard_spec_gen.go
+ * Writing file pkg/apis/dashboard/v2alpha1/dashboard_status_gen.go
+ * Writing file pkg/apis/dashboard/v2beta1/constants.go
+ * Writing file pkg/apis/dashboard/v2beta1/dashboard_codec_gen.go
+ * Writing file pkg/apis/dashboard/v2beta1/dashboard_object_gen.go
+ * Writing file pkg/apis/dashboard/v2beta1/dashboard_schema_gen.go
+ * Writing file pkg/apis/dashboard/v2beta1/dashboard_spec_gen.go
+ * Writing file pkg/apis/dashboard/v2beta1/dashboard_status_gen.go
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2/dashboard_object_gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2/types.metadata.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2/types.spec.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2/types.status.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2alpha1/dashboard_object_gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2alpha1/types.metadata.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2alpha1/types.spec.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2alpha1/types.status.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2beta1/dashboard_object_gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2beta1/types.metadata.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2beta1/types.spec.gen.ts
+ * Writing file ../../packages/grafana-schema/src/schema/dashboard/v2beta1/types.status.gen.ts
+ * Writing file pkg/apis/dashboard/v0alpha1/dashboard_client_gen.go
+ * Writing file pkg/apis/dashboard/v0alpha1/snapshot_client_gen.go
+ * Writing file pkg/apis/dashboard/v1/dashboard_client_gen.go
+ * Writing file pkg/apis/dashboard/v2/dashboard_client_gen.go
+ * Writing file pkg/apis/dashboard/v2alpha1/dashboard_client_gen.go
+ * Writing file pkg/apis/dashboard/v2beta1/dashboard_client_gen.go
+ * Writing file pkg/apis/dashboard_manifest.go
+# This is a workaround for SDK codegen not producing correct output for v0alpha1
+# Same for v1alpha1
+# Remove auto-generated DeepCopy and DeepCopyInto methods for Spec for v0alpha1.
+# Remove auto-generated DeepCopy and DeepCopyInto methods for Spec for v1alpha1.
+# Remove auto-generated DeepCopy and DeepCopyInto methods for Spec for v1 (alias to common.Unstructured).
+# Copy dashboard/v2alpha1 spec so we can use it for schema validation
+# Copy dashboard/v2beta1 spec so we can use it for schema validation
+# Copy dashboard/v2 spec so we can use it for schema validation
+Removed generated v1beta1 files (v1beta1 is a thin wrapper around v1)
+/Users/alejandromalavet/GitHub/grafana/apps/dashvalidator
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/dashvalidator/v1alpha1/client_gen.go
+ * Writing file pkg/apis/dashvalidator/v1alpha1/createcheck_request_body_types_gen.go
+ * Writing file pkg/apis/dashvalidator/v1alpha1/createcheck_response_body_types_gen.go
+ * Writing file pkg/apis/dashvalidator/v1alpha1/createcheck_response_object_types_gen.go
+ * Writing file pkg/apis/manifestdata/dashvalidator_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/example
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/example/v0alpha1/constants.go
+ * Writing file pkg/apis/example/v0alpha1/example_codec_gen.go
+ * Writing file pkg/apis/example/v0alpha1/example_object_gen.go
+ * Writing file pkg/apis/example/v0alpha1/example_schema_gen.go
+ * Writing file pkg/apis/example/v0alpha1/example_spec_gen.go
+ * Writing file pkg/apis/example/v0alpha1/example_status_gen.go
+ * Writing file pkg/apis/example/v1alpha1/constants.go
+ * Writing file pkg/apis/example/v1alpha1/example_codec_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_custom_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_object_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_schema_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_spec_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_status_gen.go
+ * Writing file plugin/src/generated/example/v0alpha1/example_object_gen.ts
+ * Writing file plugin/src/generated/example/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/example/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/example/v0alpha1/types.status.gen.ts
+ * Writing file plugin/src/generated/example/v1alpha1/example_object_gen.ts
+ * Writing file plugin/src/generated/example/v1alpha1/types.custom.gen.ts
+ * Writing file plugin/src/generated/example/v1alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/example/v1alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/example/v1alpha1/types.status.gen.ts
+ * Writing file pkg/apis/example/v0alpha1/example_client_gen.go
+ * Writing file pkg/apis/example/v1alpha1/client_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_client_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_getfoo_response_body_types_gen.go
+ * Writing file pkg/apis/example/v1alpha1/example_getfoo_response_object_types_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getother_request_params_object_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getother_request_params_types_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getother_response_types_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getsomething_request_params_object_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getsomething_request_params_types_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getsomething_response_body_types_gen.go
+ * Writing file pkg/apis/example/v1alpha1/getsomething_response_object_types_gen.go
+ * Writing file pkg/apis/manifestdata/example_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/folder
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/folder/v1beta1/constants.go
+ * Writing file pkg/apis/folder/v1beta1/folder_codec_gen.go
+ * Writing file pkg/apis/folder/v1beta1/folder_object_gen.go
+ * Writing file pkg/apis/folder/v1beta1/folder_schema_gen.go
+ * Writing file pkg/apis/folder/v1beta1/folder_spec_gen.go
+ * Writing file pkg/apis/folder/v1beta1/folder_client_gen.go
+ * Writing file pkg/apis/manifestdata/folder_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/iam
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/iam/v0alpha1/constants.go
+ * Writing file pkg/apis/iam/v0alpha1/externalgroupmapping_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/externalgroupmapping_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/externalgroupmapping_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/externalgroupmapping_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrole_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrole_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrole_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrole_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrolebinding_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrolebinding_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrolebinding_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrolebinding_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/resourcepermission_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/resourcepermission_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/resourcepermission_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/resourcepermission_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/role_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/role_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/role_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/role_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/rolebinding_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/rolebinding_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/rolebinding_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/rolebinding_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/serviceaccount_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/serviceaccount_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/serviceaccount_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/serviceaccount_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teambinding_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teambinding_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teambinding_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teambinding_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teamlbacrule_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teamlbacrule_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teamlbacrule_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teamlbacrule_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_codec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_schema_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_spec_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_status_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/externalgroupmapping_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchteams_request_params_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchteams_request_params_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchteams_response_body_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchteams_response_object_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchusers_request_params_object_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchusers_request_params_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/getsearchusers_response_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrole_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/globalrolebinding_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/resourcepermission_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/role_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/rolebinding_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/serviceaccount_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_getteamgroups_response_body_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_getteamgroups_response_object_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_getteammembers_response_body_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/team_getteammembers_response_object_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teambinding_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/teamlbacrule_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_client_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_getuserteams_response_body_types_gen.go
+ * Writing file pkg/apis/iam/v0alpha1/user_getuserteams_response_object_types_gen.go
+ * Writing file pkg/apis/iam_manifest.go
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GetSearchTeamsBody,Hits
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GetSearchUsersResponse,Hits
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GetTeamGroupsBody,Items
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GetTeamMembersBody,Items
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GetUserTeamsBody,Items
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GlobalRoleBindingSpec,RoleRefs
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GlobalRoleSpec,Permissions
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,PermissionsSearchResult,Permissions
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,ResourcePermissionSpec,Permissions
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,RoleBindingSpec,RoleRefs
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,RoleSpec,Permissions
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,RoleSpec,PermissionsOmitted
+API rule violation: list_type_missing,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,RoleSpec,RoleRefs
+API rule violation: names_match,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,TeamLBACRuleSpec,DatasourceType
+API rule violation: names_match,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,TeamLBACRuleSpec,DatasourceUid
+API rule violation: names_match,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,TeamLBACRuleSpec,TeamFilters
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,ExternalGroupMappingList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GlobalRoleBindingList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,GlobalRoleList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,ResourcePermissionList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,RoleBindingList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,RoleList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,ServiceAccountList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,TeamBindingList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,TeamLBACRuleList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,TeamList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,UserList,ListMeta
+ * Writing file pkg/apis/iam/v0alpha1/zz_openapi_gen.go
+/Users/alejandromalavet/GitHub/grafana/apps/live
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/live/v1alpha1/channel_codec_gen.go
+ * Writing file pkg/apis/live/v1alpha1/channel_object_gen.go
+ * Writing file pkg/apis/live/v1alpha1/channel_schema_gen.go
+ * Writing file pkg/apis/live/v1alpha1/channel_spec_gen.go
+ * Writing file pkg/apis/live/v1alpha1/constants.go
+ * Writing file pkg/apis/live/v1alpha1/channel_client_gen.go
+ * Writing file pkg/apis/live/v1alpha1/client_gen.go
+ * Writing file pkg/apis/live/v1alpha1/getsomething_request_params_object_gen.go
+ * Writing file pkg/apis/live/v1alpha1/getsomething_request_params_types_gen.go
+ * Writing file pkg/apis/live/v1alpha1/getsomething_response_body_types_gen.go
+ * Writing file pkg/apis/live/v1alpha1/getsomething_response_object_types_gen.go
+ * Writing file pkg/apis/manifestdata/live_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/logsdrilldown
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/constants.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_codec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_object_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_schema_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_spec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_status_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldowndefaults_codec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldowndefaults_object_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldowndefaults_schema_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldowndefaults_spec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldowndefaults_status_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/constants.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultcolumns_codec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultcolumns_object_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultcolumns_schema_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultcolumns_spec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultcolumns_status_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_codec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_object_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_schema_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_spec_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_status_gen.go
+ * Writing file plugin/src/generated/logsdrilldown/v1alpha1/logsdrilldown_object_gen.ts
+ * Writing file plugin/src/generated/logsdrilldown/v1alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/logsdrilldown/v1alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/logsdrilldown/v1alpha1/types.status.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultcolumns/v1beta1/logsdrilldowndefaultcolumns_object_gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultcolumns/v1beta1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultcolumns/v1beta1/types.spec.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultcolumns/v1beta1/types.status.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultlabels/v1beta1/logsdrilldowndefaultlabels_object_gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultlabels/v1beta1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultlabels/v1beta1/types.spec.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaultlabels/v1beta1/types.status.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaults/v1alpha1/logsdrilldowndefaults_object_gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaults/v1alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaults/v1alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/logsdrilldowndefaults/v1alpha1/types.status.gen.ts
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_client_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldowndefaults_client_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultcolumns_client_gen.go
+ * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_client_gen.go
+ * Writing file pkg/apis/logsdrilldown_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/playlist
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/playlist/v0alpha1/constants.go
+ * Writing file pkg/apis/playlist/v0alpha1/playlist_codec_gen.go
+ * Writing file pkg/apis/playlist/v0alpha1/playlist_object_gen.go
+ * Writing file pkg/apis/playlist/v0alpha1/playlist_schema_gen.go
+ * Writing file pkg/apis/playlist/v0alpha1/playlist_spec_gen.go
+ * Writing file pkg/apis/playlist/v0alpha1/playlist_status_gen.go
+ * Writing file pkg/apis/playlist/v1/constants.go
+ * Writing file pkg/apis/playlist/v1/playlist_codec_gen.go
+ * Writing file pkg/apis/playlist/v1/playlist_object_gen.go
+ * Writing file pkg/apis/playlist/v1/playlist_schema_gen.go
+ * Writing file pkg/apis/playlist/v1/playlist_spec_gen.go
+ * Writing file pkg/apis/playlist/v1/playlist_status_gen.go
+ * Writing file pkg/apis/manifestdata/playlist_manifest.go
+ * Writing file pkg/apis/playlist/v1/playlist_client_gen.go
+Removed generated v0alpha1 files (v0alpha1 is a thin wrapper around v1)
+/Users/alejandromalavet/GitHub/grafana/apps/plugins
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/plugins/v0alpha1/constants.go
+ * Writing file pkg/apis/plugins/v0alpha1/meta_codec_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/meta_object_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/meta_schema_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/meta_spec_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/meta_status_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/plugin_codec_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/plugin_object_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/plugin_schema_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/plugin_spec_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/plugin_status_gen.go
+ * Writing file plugin/src/generated/meta/v0alpha1/meta_object_gen.ts
+ * Writing file plugin/src/generated/meta/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/meta/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/meta/v0alpha1/types.status.gen.ts
+ * Writing file plugin/src/generated/plugin/v0alpha1/plugin_object_gen.ts
+ * Writing file plugin/src/generated/plugin/v0alpha1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/plugin/v0alpha1/types.spec.gen.ts
+ * Writing file plugin/src/generated/plugin/v0alpha1/types.status.gen.ts
+ * Writing file pkg/apis/plugins/v0alpha1/meta_client_gen.go
+ * Writing file pkg/apis/plugins/v0alpha1/plugin_client_gen.go
+ * Writing file pkg/apis/plugins_manifest.go
+rm -f ./packages/grafana-runtime/src/services/pluginMeta/types/*.ts 
+cp plugin/src/generated/meta/v0alpha1/meta_object_gen.ts ../../packages/grafana-runtime/src/services/pluginMeta/types/meta_object_gen.ts
+cp plugin/src/generated/meta/v0alpha1/types.spec.gen.ts ../../packages/grafana-runtime/src/services/pluginMeta/types/types.spec.gen.ts
+cp plugin/src/generated/meta/v0alpha1/types.status.gen.ts ../../packages/grafana-runtime/src/services/pluginMeta/types/types.status.gen.ts
+/Users/alejandromalavet/GitHub/grafana/apps/preferences
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/preferences/v1alpha1/constants.go
+ * Writing file pkg/apis/preferences/v1alpha1/preferences_codec_gen.go
+ * Writing file pkg/apis/preferences/v1alpha1/preferences_object_gen.go
+ * Writing file pkg/apis/preferences/v1alpha1/preferences_schema_gen.go
+ * Writing file pkg/apis/preferences/v1alpha1/preferences_spec_gen.go
+ * Writing file pkg/apis/manifestdata/preferences_manifest.go
+ * Writing file pkg/apis/preferences/v1alpha1/preferences_client_gen.go
+/Users/alejandromalavet/GitHub/grafana/apps/provisioning
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/manifestdata/provisioning_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/quotas
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/quotas/v0alpha1/client_gen.go
+ * Writing file pkg/apis/quotas/v0alpha1/getusage_request_params_object_gen.go
+ * Writing file pkg/apis/quotas/v0alpha1/getusage_request_params_types_gen.go
+ * Writing file pkg/apis/quotas/v0alpha1/getusage_response_body_types_gen.go
+ * Writing file pkg/apis/quotas/v0alpha1/getusage_response_object_types_gen.go
+ * Writing file pkg/apis/quotas_manifest.go
+/Users/alejandromalavet/GitHub/grafana/apps/secret
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/secret/v1beta1/constants.go
+ * Writing file pkg/apis/secret/v1beta1/keeper_codec_gen.go
+ * Writing file pkg/apis/secret/v1beta1/keeper_object_gen.go
+ * Writing file pkg/apis/secret/v1beta1/keeper_schema_gen.go
+ * Writing file pkg/apis/secret/v1beta1/keeper_spec_gen.go
+ * Writing file pkg/apis/secret/v1beta1/keeper_status_gen.go
+ * Writing file pkg/apis/secret/v1beta1/securevalue_codec_gen.go
+ * Writing file pkg/apis/secret/v1beta1/securevalue_object_gen.go
+ * Writing file pkg/apis/secret/v1beta1/securevalue_schema_gen.go
+ * Writing file pkg/apis/secret/v1beta1/securevalue_spec_gen.go
+ * Writing file pkg/apis/secret/v1beta1/securevalue_status_gen.go
+ * Writing file pkg/apis/secret/v1beta1/keeper_client_gen.go
+ * Writing file pkg/apis/secret/v1beta1/securevalue_client_gen.go
+ * Writing file pkg/apis/secret_manifest.go
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/secret/pkg/apis/secret/v1beta1,KeeperList,ListMeta
+API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/secret/pkg/apis/secret/v1beta1,SecureValueList,ListMeta
+ * Writing file pkg/apis/secret/v1beta1/zz_openapi_gen.go
+/Users/alejandromalavet/GitHub/grafana/apps/shorturl
+go get github.com/grafana/grafana-app-sdk@e54bc3b
+go mod tidy
+ * Writing file pkg/apis/shorturl/v1beta1/constants.go
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_codec_gen.go
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_object_gen.go
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_schema_gen.go
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_spec_gen.go
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_status_gen.go
+ * Writing file plugin/src/generated/shorturl/v1beta1/shorturl_object_gen.ts
+ * Writing file plugin/src/generated/shorturl/v1beta1/types.metadata.gen.ts
+ * Writing file plugin/src/generated/shorturl/v1beta1/types.spec.gen.ts
+ * Writing file plugin/src/generated/shorturl/v1beta1/types.status.gen.ts
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_client_gen.go
+ * Writing file pkg/apis/shorturl/v1beta1/shorturl_getgoto_response_types_gen.go
+ * Writing file pkg/apis/shorturl_manifest.go
+~/GitHub/grafana/hack ~/GitHub/grafana
+~/GitHub/grafana
+Generating code for pkg/apis/appplugin...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+Deleting pkg/apis/appplugin/v0alpha1/zz_generated.openapi_violation_exceptions.list since it is empty
+
+Generating code for pkg/apis/datasource...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for pkg/apis/iam...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for pkg/apis/service...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+Deleting pkg/apis/service/v0alpha1/zz_generated.openapi_violation_exceptions.list since it is empty
+
+Generating code for pkg/apis/userstorage...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+Deleting pkg/apis/userstorage/v0alpha1/zz_generated.openapi_violation_exceptions.list since it is empty
+
+Generating client code...
+-------------------------
+Generating applyconfig code for 1 targets
+Generating client code for 1 targets
+Generating lister code for 1 targets
+Generating informer code for 1 targets
+
+Generating code for pkg/apimachinery/apis/common...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+
+Generating code for pkg/aggregator/apis/aggregation...
+=============================================
+Generating deepcopy code for 2 targets
+Generating defaulter code for 1 targets
+Generating conversion code for 1 targets
+Generating openapi code for 1 targets
+Deleting pkg/aggregator/apis/aggregation/v0alpha1/zz_generated.openapi_violation_exceptions.list since it is empty
+
+Generating client code...
+-------------------------
+Generating applyconfig code for 1 targets
+Generating client code for 1 targets
+Generating lister code for 1 targets
+Generating informer code for 1 targets
+
+Generating code for apps/dashboard/pkg/apis/dashboard...
+=============================================
+Generating deepcopy code for 5 targets
+Generating defaulter code for 5 targets
+Generating conversion code for 5 targets
+Generating openapi code for 1 targets
+
+Generating openapi code for 1 targets
+
+Generating openapi code for 1 targets
+Deleting apps/dashboard/pkg/apis/dashboard/v1beta1/zz_generated.openapi_violation_exceptions.list since it is empty
+
+Generating openapi code for 1 targets
+
+Generating openapi code for 1 targets
+
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+
+Generating code for apps/provisioning/pkg/apis/admission...
+=============================================
+Generating code for apps/provisioning/pkg/apis/apifmt...
+=============================================
+Generating code for apps/provisioning/pkg/apis/auth...
+=============================================
+Generating code for apps/provisioning/pkg/apis/manifestdata...
+=============================================
+Generating code for apps/provisioning/pkg/apis/provisioning...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+Generating applyconfig code for 1 targets
+Generating client code for 1 targets
+Generating lister code for 1 targets
+Generating informer code for 1 targets
+
+Generating code for apps/folder/pkg/apis/folder...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for apps/folder/pkg/apis/manifestdata...
+=============================================
+Generating client code...
+-------------------------
+
+Generating code for apps/preferences/pkg/apis/manifestdata...
+=============================================
+Generating code for apps/preferences/pkg/apis/preferences...
+=============================================
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+
+Generating code for apps/collections/pkg/apis/collections...
+=============================================
+Generating openapi code for 1 targets
+
+Generating code for apps/collections/pkg/apis/manifestdata...
+=============================================
+Generating client code...
+-------------------------
+
+Generating code for apps/scope/pkg/apis/scope...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+
+Generating code for apps/alerting/alertenrichment/pkg/apis/alertenrichment...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+
+Generating code for pkg/extensions/apis/alertenrichment...
+=============================================
+Generating code for pkg/extensions/apis/banners...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+Deleting pkg/extensions/apis/banners/v0alpha1/zz_generated.openapi_violation_exceptions.list since it is empty
+
+Generating code for pkg/extensions/apis/cloudconfig...
+=============================================
+Generating deepcopy code for 3 targets
+Generating conversion code for 2 targets
+Generating openapi code for 1 targets
+
+Generating openapi code for 1 targets
+
+Generating code for pkg/extensions/apis/queries...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for pkg/extensions/apis/querylibrary...
+=============================================
+Generating deepcopy code for 2 targets
+Generating defaulter code for 2 targets
+Generating openapi code for 2 targets
+
+Generating code for pkg/extensions/apis/reporting...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for pkg/extensions/apis/sandboxsettings...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for pkg/extensions/apis/scim...
+=============================================
+Generating deepcopy code for 1 targets
+Generating defaulter code for 1 targets
+Generating openapi code for 1 targets
+
+Generating code for pkg/extensions/apis/setting...
+=============================================
+Generating deepcopy code for 2 targets
+Generating defaulter code for 2 targets
+Generating openapi code for 1 targets
+
+Generating openapi code for 1 targets
+
+Generating code for pkg/extensions/apis/usageinsights...
+=============================================
+Generating openapi code for 1 targets
+
+Generating client code...
+-------------------------
+Generating applyconfig code for 2 targets
+Generating client code for 2 targets
+Generating lister code for 2 targets
+Generating informer code for 2 targets
+
+done.
