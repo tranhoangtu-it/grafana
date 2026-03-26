@@ -448,7 +448,15 @@ func Initialize(ctx context.Context, cfg *setting.Cfg, opts Options, apiOpts api
 	actionSetService := resourcepermissions.NewActionSetService()
 	permissionRegistry := permreg.ProvidePermissionRegistry()
 	serverLockService := serverlock.ProvideService(sqlStore, tracingService)
-	acimplService, err := acimpl.ProvideService(cfg, sqlStore, routeRegisterImpl, cacheService, accessControl, userimplService, actionSetService, featureToggles, tracingService, permissionRegistry, serverLockService)
+	server, err := authz.ProvideEmbeddedZanzanaServer(cfg, sqlStore, tracingService, featureToggles, registerer, eventualRestConfigProvider)
+	if err != nil {
+		return nil, err
+	}
+	zanzanaClient, err := authz.ProvideZanzanaClient(cfg, sqlStore, server, featureToggles, registerer)
+	if err != nil {
+		return nil, err
+	}
+	acimplService, err := acimpl.ProvideService(cfg, sqlStore, routeRegisterImpl, cacheService, accessControl, userimplService, actionSetService, featureToggles, tracingService, permissionRegistry, serverLockService, zanzanaClient)
 	if err != nil {
 		return nil, err
 	}
@@ -494,14 +502,6 @@ func Initialize(ctx context.Context, cfg *setting.Cfg, opts Options, apiOpts api
 	contextHandler := grpccontext.ProvideContextHandler(tracingService)
 	authenticator := interceptors.ProvideAuthenticator(apikeyService, userimplService, acimplService, contextHandler)
 	grpcserverProvider, err := grpcserver.ProvideService(cfg, featureToggles, authenticator, tracer, registerer)
-	if err != nil {
-		return nil, err
-	}
-	server, err := authz.ProvideEmbeddedZanzanaServer(cfg, sqlStore, tracingService, featureToggles, registerer, eventualRestConfigProvider)
-	if err != nil {
-		return nil, err
-	}
-	zanzanaClient, err := authz.ProvideZanzanaClient(cfg, sqlStore, server, featureToggles, registerer)
 	if err != nil {
 		return nil, err
 	}
@@ -1150,7 +1150,15 @@ func InitializeForTest(ctx context.Context, t sqlutil.ITestDB, testingT interfac
 	actionSetService := resourcepermissions.NewActionSetService()
 	permissionRegistry := permreg.ProvidePermissionRegistry()
 	serverLockService := serverlock.ProvideService(sqlStore, tracingService)
-	acimplService, err := acimpl.ProvideService(cfg, sqlStore, routeRegisterImpl, cacheService, accessControl, userimplService, actionSetService, featureToggles, tracingService, permissionRegistry, serverLockService)
+	server, err := authz.ProvideEmbeddedZanzanaServer(cfg, sqlStore, tracingService, featureToggles, registerer, eventualRestConfigProvider)
+	if err != nil {
+		return nil, err
+	}
+	zanzanaClient, err := authz.ProvideZanzanaClient(cfg, sqlStore, server, featureToggles, registerer)
+	if err != nil {
+		return nil, err
+	}
+	acimplService, err := acimpl.ProvideService(cfg, sqlStore, routeRegisterImpl, cacheService, accessControl, userimplService, actionSetService, featureToggles, tracingService, permissionRegistry, serverLockService, zanzanaClient)
 	if err != nil {
 		return nil, err
 	}
@@ -1196,14 +1204,6 @@ func InitializeForTest(ctx context.Context, t sqlutil.ITestDB, testingT interfac
 	contextHandler := grpccontext.ProvideContextHandler(tracingService)
 	authenticator := interceptors.ProvideAuthenticator(apikeyService, userimplService, acimplService, contextHandler)
 	grpcserverProvider, err := grpcserver.ProvideService(cfg, featureToggles, authenticator, tracer, registerer)
-	if err != nil {
-		return nil, err
-	}
-	server, err := authz.ProvideEmbeddedZanzanaServer(cfg, sqlStore, tracingService, featureToggles, registerer, eventualRestConfigProvider)
-	if err != nil {
-		return nil, err
-	}
-	zanzanaClient, err := authz.ProvideZanzanaClient(cfg, sqlStore, server, featureToggles, registerer)
 	if err != nil {
 		return nil, err
 	}
