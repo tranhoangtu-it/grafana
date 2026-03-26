@@ -639,5 +639,58 @@ describe('DashboardCard', () => {
 
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
+
+    describe('suggested_dashboard kind', () => {
+      it('should show assistant button for suggested_dashboard kind', () => {
+        render(
+          <DashboardCard
+            title="Test Dashboard"
+            dashboard={createMockGnetDashboard()}
+            onClick={mockOnClick}
+            kind="suggested_dashboard"
+            showAssistantButton
+          />
+        );
+
+        expect(screen.getByRole('button', { name: /Customize with assistant/i })).toBeInTheDocument();
+      });
+
+      it('should open assistant with the adapt prompt for suggested_dashboard kind', async () => {
+        const { user } = render(
+          <DashboardCard
+            title="Test Dashboard"
+            dashboard={createMockGnetDashboard()}
+            onClick={mockOnClick}
+            kind="suggested_dashboard"
+            showAssistantButton
+          />
+        );
+
+        await user.click(screen.getByRole('button', { name: /Customize with assistant/i }));
+
+        expect(mockOpenAssistant).toHaveBeenCalledWith(
+          expect.objectContaining({
+            prompt:
+              'Adapt this dashboard to my environment by connecting it to my available data sources and adjusting queries as needed.',
+          })
+        );
+      });
+
+      it('should call onClick with true when assistant button is clicked for suggested_dashboard kind', async () => {
+        const { user } = render(
+          <DashboardCard
+            title="Test Dashboard"
+            dashboard={createMockGnetDashboard()}
+            onClick={mockOnClick}
+            kind="suggested_dashboard"
+            showAssistantButton
+          />
+        );
+
+        await user.click(screen.getByRole('button', { name: /Customize with assistant/i }));
+
+        expect(mockOnClick).toHaveBeenCalledWith(true);
+      });
+    });
   });
 });
