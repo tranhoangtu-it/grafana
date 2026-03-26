@@ -2,11 +2,11 @@ import { ChangeEvent, FocusEvent, KeyboardEvent, ReactElement, useCallback, useE
 
 import { TextBoxVariableModel, isEmptyObject } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { sceneUtils } from '@grafana/scenes';
 import { Input } from '@grafana/ui';
 import { useDispatch } from 'app/types/store';
 
 import { variableAdapters } from '../adapters';
+import { VARIABLE_PREFIX } from '../constants';
 import { VariablePickerProps } from '../pickers/types';
 import { toKeyedAction } from '../state/keyedVariablesReducer';
 import { changeVariableProp } from '../state/sharedReducer';
@@ -73,7 +73,7 @@ export function TextBoxVariablePicker({ variable, onVariableChange, readOnly }: 
       disabled={readOnly}
       onKeyDown={onKeyDown}
       placeholder={t('variable.textbox.placeholder', 'Enter variable value')}
-      id={sceneUtils.getVariableControlId(variable.state.type, variable.state.key)}
+      id={VARIABLE_PREFIX + variable.id}
     />
   );
 }

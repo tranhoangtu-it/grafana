@@ -22,6 +22,7 @@ import { NavigationKey, VariablePickerProps } from '../types';
 
 import { commitChangesToVariable, filterOrSearchOptions, navigateOptions, openOptions } from './actions';
 import { initialOptionPickerState, OptionsPickerState, toggleAllOptions, toggleOption } from './reducer';
+import { VARIABLE_PREFIX } from '../../constants';
 
 export const optionPickerFactory = <Model extends VariableWithOptions | VariableWithMultiSupport>(): ComponentType<
   VariablePickerProps<Model>
@@ -127,7 +128,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
 
       return (
         <VariableLink
-          id={sceneUtils.getVariableControlId(variable.state.type, variable.state.key)}
+          id={VARIABLE_PREFIX + variable.id}
           text={linkText}
           onClick={this.onShowOptions}
           loading={loading}
@@ -146,7 +147,7 @@ export const optionPickerFactory = <Model extends VariableWithOptions | Variable
       return (
         <ClickOutsideWrapper onClick={this.onHideOptions}>
           <VariableInput
-            id={sceneUtils.getVariableControlId(this.props.variable.state.type, this.props.variable.state.key)}
+            id={VARIABLE_PREFIX + id}
             value={picker.queryValue}
             onChange={this.onFilterOrSearchOptions}
             onNavigate={this.onNavigate}
