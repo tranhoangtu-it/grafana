@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
 import { FieldType } from '@grafana/data';
-
 import { GrafanaAlertState } from 'app/types/unified-alerting-dto';
 
 import {

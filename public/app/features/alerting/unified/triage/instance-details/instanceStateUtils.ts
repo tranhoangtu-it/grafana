@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { DataFrame, Labels } from '@grafana/data';
 import { useQueryRunner } from '@grafana/scenes-react';
-
 import { GrafanaAlertState } from 'app/types/unified-alerting-dto';
 
 import { DATASOURCE_UID, METRIC_NAME } from '../constants';
