@@ -49,6 +49,20 @@ const getLocalStorageLayout = () => {
     return SearchLayout.Folders;
   }
 };
+
+type SearchReportInfo = Parameters<typeof reportSearchQueryInteraction>[1];
+const getSearchReportInfo = (state: SearchState): SearchReportInfo => ({
+  layout: state.layout,
+  starred: state.starred,
+  sortValue: state.sort,
+  query: state.query,
+  tagCount: state.tag?.length,
+  ownerReference: Boolean(state.ownerReference?.length),
+  includePanels: state.includePanels,
+  deleted: state.deleted,
+  createdBy: !!state.createdBy,
+});
+
 export class SearchStateManager extends StateManagerBase<SearchState> {
   updateLocation = debounce((query) => locationService.partial(query, true), 300);
   doSearchWithDebounce = debounce(() => this.doSearch(), 300);
@@ -269,17 +283,7 @@ export class SearchStateManager extends StateManagerBase<SearchState> {
   }
 
   doSearch() {
-    const trackingInfo = {
-      layout: this.state.layout,
-      starred: this.state.starred,
-      sortValue: this.state.sort,
-      query: this.state.query,
-      tagCount: this.state.tag?.length,
-      ownerReference: Boolean(this.state.ownerReference?.length),
-      includePanels: this.state.includePanels,
-      deleted: this.state.deleted,
-      createdBy: !!this.state.createdBy,
-    };
+    const trackingInfo = getSearchReportInfo(this.state);
 
     reportSearchQueryInteraction(this.state.eventTrackingNamespace, trackingInfo);
 
@@ -323,34 +327,14 @@ export class SearchStateManager extends StateManagerBase<SearchState> {
    * When item is selected clear some filters and report interaction
    */
   onSearchItemClicked = (e: React.MouseEvent<HTMLElement>) => {
-    reportSearchResultInteraction(this.state.eventTrackingNamespace, {
-      layout: this.state.layout,
-      starred: this.state.starred,
-      sortValue: this.state.sort,
-      query: this.state.query,
-      tagCount: this.state.tag?.length,
-      ownerReference: Boolean(this.state.ownerReference?.length),
-      includePanels: this.state.includePanels,
-      deleted: this.state.deleted,
-      createdBy: !!this.state.createdBy,
-    });
+    reportSearchResultInteraction(this.state.eventTrackingNamespace, getSearchReportInfo(this.state));
   };
 
   /**
    * Caller should handle debounce
    */
   onReportSearchUsage = () => {
-    reportDashboardListViewed(this.state.eventTrackingNamespace, {
-      layout: this.state.layout,
-      starred: this.state.starred,
-      sortValue: this.state.sort,
-      query: this.state.query,
-      tagCount: this.state.tag?.length,
-      ownerReference: Boolean(this.state.ownerReference?.length),
-      includePanels: this.state.includePanels,
-      deleted: this.state.deleted,
-      createdBy: !!this.state.createdBy,
-    });
+    reportDashboardListViewed(this.state.eventTrackingNamespace, getSearchReportInfo(this.state));
   };
 }
 
