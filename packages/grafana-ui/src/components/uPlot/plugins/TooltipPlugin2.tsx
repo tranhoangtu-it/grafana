@@ -116,30 +116,35 @@ const userAgentIsMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
 interface LocalVars {
   selectedRange: TimeRange2 | null;
-  yDrag: any
-  offsetX: any
-  offsetY: any
-  seriesIdxs: any
-  closestSeriesIdx: any
-  viaSync: any
-  dataLinks: any
-  adHocFilters: any
-  persistentLinks: any
-  pendingRender: any
-  pendingPinned: any
-  yZoomed: any
-  _isHovering: any
-  _someSeriesIdx: any
-  _isPinned: any
-  _style: any
-  plotVisible: any
-  scrollbarWidth: any
-  winWid: any
-  winHgt: any
-  syncTooltip: any
+  yDrag: boolean;
+  offsetX: number;
+  offsetY: number;
+  seriesIdxs: Array<number | null>;
+  closestSeriesIdx: number | null;
+  viaSync: boolean;
+  dataLinks: LinkModel[];
+  adHocFilters: AdHocFilterModel[];
+  persistentLinks: LinkModel[][];
+  pendingRender: boolean;
+  pendingPinned: boolean;
+  yZoomed: boolean;
+  _isHovering: boolean;
+  _someSeriesIdx: boolean;
+  _isPinned: boolean;
+  _style: Partial<CSSProperties>;
+  plotVisible: boolean;
+  scrollbarWidth: number;
+  winWid: number;
+  winHgt: number;
+  syncTooltip: boolean;
 }
 
-const initLocalVars = (isHovering: boolean, isPinned: boolean, style: Partial<React.CSSProperties>, syncMode: DashboardCursorSync | undefined) => {
+const initLocalVars = (
+  isHovering: boolean,
+  isPinned: boolean,
+  style: Partial<React.CSSProperties>,
+  syncMode: DashboardCursorSync | undefined
+) => {
   let yDrag = false;
 
   let offsetX = 0;
@@ -196,9 +201,9 @@ const initLocalVars = (isHovering: boolean, isPinned: boolean, style: Partial<Re
     scrollbarWidth,
     winWid,
     winHgt,
-    syncTooltip
+    syncTooltip,
   };
-}
+};
 /**
  * @alpha
  */
