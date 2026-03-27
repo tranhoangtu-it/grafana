@@ -104,7 +104,7 @@ const RuleViewer = () => {
   // of duplicating provisioned alert rules
   const [duplicateRuleIdentifier, setDuplicateRuleIdentifier] = useState<RuleIdentifier>();
   const { returnTo } = useReturnTo('/alerting/list');
-  const { annotations, promRule, rulerRule, namespace } = rule;
+  const { annotations, promRule, rulerRule } = rule;
 
   const hasError = isErrorHealth(promRule?.health);
 
