@@ -25,12 +25,8 @@ Fixing: ./pkg/extensions/apis/usageinsights/kinds
 Fixing: ./pkg/extensions/apps/querycaching/kinds
 Fixing: ./pkg/extensions/apps/dsabstraction/kinds
 Fixing: ./pkg/services/apiserver/builder/runner/testdata/app/kinds
-Installing Grafana App SDK version e54bc3b
-# The only way to install specific versions of binaries using `go install`
-# is by setting GOBIN to the directory you want to install the binary to.
-GOBIN=/Users/alejandromalavet/go/1.26.0/bin/app-sdk-e54bc3b go install github.com/grafana/grafana-app-sdk/cmd/grafana-app-sdk@e54bc3b
 /Users/alejandromalavet/GitHub/grafana/apps/advisor
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/advisor/v0alpha1/check_codec_gen.go
  * Writing file pkg/apis/advisor/v0alpha1/check_object_gen.go
@@ -50,7 +46,7 @@ go mod tidy
  * Writing file pkg/apis/advisor/v0alpha1/createregister_response_object_types_gen.go
  * Writing file pkg/apis/advisor_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/alerting/historian
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/alertinghistorian/v0alpha1/constants.go
  * Writing file pkg/apis/alertinghistorian/v0alpha1/dummy_codec_gen.go
@@ -71,7 +67,7 @@ go mod tidy
  * Writing file pkg/apis/alertinghistorian/v0alpha1/getalertstatehistory_response_types_gen.go
  * Writing file pkg/apis/alertinghistorian_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/alerting/notifications
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/alertingnotifications/v0alpha1/constants.go
  * Writing file pkg/apis/alertingnotifications/v0alpha1/inhibitionrule_codec_gen.go
@@ -137,7 +133,7 @@ go mod tidy
  * Writing file pkg/apis/alertingnotifications/v1beta1/timeinterval_client_gen.go
  * Writing file pkg/apis/alertingnotifications_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/alerting/rules
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/alerting/v0alpha1/alertrule_codec_gen.go
  * Writing file pkg/apis/alerting/v0alpha1/alertrule_object_gen.go
@@ -171,7 +167,7 @@ API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/app
 API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/alerting/rules/pkg/apis/alerting/v0alpha1,RecordingRuleList,ListMeta
  * Writing file pkg/apis/alerting/v0alpha1/zz_openapi_gen.go
 /Users/alejandromalavet/GitHub/grafana/apps/annotation
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/annotation/v0alpha1/annotation_codec_gen.go
  * Writing file pkg/apis/annotation/v0alpha1/annotation_object_gen.go
@@ -191,7 +187,7 @@ go mod tidy
  * Writing file pkg/apis/annotation/v0alpha1/gettags_response_object_types_gen.go
  * Writing file pkg/apis/annotation_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/collections
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/collections/v1alpha1/constants.go
  * Writing file pkg/apis/collections/v1alpha1/stars_codec_gen.go
@@ -201,7 +197,7 @@ go mod tidy
  * Writing file pkg/apis/collections/v1alpha1/stars_client_gen.go
  * Writing file pkg/apis/manifestdata/collections_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/correlations
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/correlation/v0alpha1/constants.go
  * Writing file pkg/apis/correlation/v0alpha1/correlation_codec_gen.go
@@ -215,7 +211,7 @@ go mod tidy
  * Writing file pkg/apis/correlation_manifest.go
 # Fix the TargetSpec schema in manifest - remove nested additionalProperties
 /Users/alejandromalavet/GitHub/grafana/apps/dashboard
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/dashboard/v0alpha1/constants.go
  * Writing file pkg/apis/dashboard/v0alpha1/dashboard_codec_gen.go
@@ -286,7 +282,7 @@ go mod tidy
 # Copy dashboard/v2 spec so we can use it for schema validation
 Removed generated v1beta1 files (v1beta1 is a thin wrapper around v1)
 /Users/alejandromalavet/GitHub/grafana/apps/dashvalidator
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/dashvalidator/v1alpha1/client_gen.go
  * Writing file pkg/apis/dashvalidator/v1alpha1/createcheck_request_body_types_gen.go
@@ -294,7 +290,7 @@ go mod tidy
  * Writing file pkg/apis/dashvalidator/v1alpha1/createcheck_response_object_types_gen.go
  * Writing file pkg/apis/manifestdata/dashvalidator_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/example
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/example/v0alpha1/constants.go
  * Writing file pkg/apis/example/v0alpha1/example_codec_gen.go
@@ -332,7 +328,7 @@ go mod tidy
  * Writing file pkg/apis/example/v1alpha1/getsomething_response_object_types_gen.go
  * Writing file pkg/apis/manifestdata/example_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/folder
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/folder/v1beta1/constants.go
  * Writing file pkg/apis/folder/v1beta1/folder_codec_gen.go
@@ -342,7 +338,7 @@ go mod tidy
  * Writing file pkg/apis/folder/v1beta1/folder_client_gen.go
  * Writing file pkg/apis/manifestdata/folder_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/iam
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/iam/v0alpha1/constants.go
  * Writing file pkg/apis/iam/v0alpha1/externalgroupmapping_codec_gen.go
@@ -445,7 +441,7 @@ API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/app
 API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/iam/pkg/apis/iam/v0alpha1,UserList,ListMeta
  * Writing file pkg/apis/iam/v0alpha1/zz_openapi_gen.go
 /Users/alejandromalavet/GitHub/grafana/apps/live
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/live/v1alpha1/channel_codec_gen.go
  * Writing file pkg/apis/live/v1alpha1/channel_object_gen.go
@@ -460,7 +456,7 @@ go mod tidy
  * Writing file pkg/apis/live/v1alpha1/getsomething_response_object_types_gen.go
  * Writing file pkg/apis/manifestdata/live_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/logsdrilldown
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/logsdrilldown/v1alpha1/constants.go
  * Writing file pkg/apis/logsdrilldown/v1alpha1/logsdrilldown_codec_gen.go
@@ -506,7 +502,7 @@ go mod tidy
  * Writing file pkg/apis/logsdrilldown/v1beta1/logsdrilldowndefaultlabels_client_gen.go
  * Writing file pkg/apis/logsdrilldown_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/playlist
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/playlist/v0alpha1/constants.go
  * Writing file pkg/apis/playlist/v0alpha1/playlist_codec_gen.go
@@ -524,7 +520,7 @@ go mod tidy
  * Writing file pkg/apis/playlist/v1/playlist_client_gen.go
 Removed generated v0alpha1 files (v0alpha1 is a thin wrapper around v1)
 /Users/alejandromalavet/GitHub/grafana/apps/plugins
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/plugins/v0alpha1/constants.go
  * Writing file pkg/apis/plugins/v0alpha1/meta_codec_gen.go
@@ -553,7 +549,7 @@ cp plugin/src/generated/meta/v0alpha1/meta_object_gen.ts ../../packages/grafana-
 cp plugin/src/generated/meta/v0alpha1/types.spec.gen.ts ../../packages/grafana-runtime/src/services/pluginMeta/types/types.spec.gen.ts
 cp plugin/src/generated/meta/v0alpha1/types.status.gen.ts ../../packages/grafana-runtime/src/services/pluginMeta/types/types.status.gen.ts
 /Users/alejandromalavet/GitHub/grafana/apps/preferences
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/preferences/v1alpha1/constants.go
  * Writing file pkg/apis/preferences/v1alpha1/preferences_codec_gen.go
@@ -563,11 +559,11 @@ go mod tidy
  * Writing file pkg/apis/manifestdata/preferences_manifest.go
  * Writing file pkg/apis/preferences/v1alpha1/preferences_client_gen.go
 /Users/alejandromalavet/GitHub/grafana/apps/provisioning
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/manifestdata/provisioning_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/quotas
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/quotas/v0alpha1/client_gen.go
  * Writing file pkg/apis/quotas/v0alpha1/getusage_request_params_object_gen.go
@@ -576,7 +572,7 @@ go mod tidy
  * Writing file pkg/apis/quotas/v0alpha1/getusage_response_object_types_gen.go
  * Writing file pkg/apis/quotas_manifest.go
 /Users/alejandromalavet/GitHub/grafana/apps/secret
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/secret/v1beta1/constants.go
  * Writing file pkg/apis/secret/v1beta1/keeper_codec_gen.go
@@ -596,7 +592,7 @@ API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/app
 API rule violation: streaming_list_type_json_tags,github.com/grafana/grafana/apps/secret/pkg/apis/secret/v1beta1,SecureValueList,ListMeta
  * Writing file pkg/apis/secret/v1beta1/zz_openapi_gen.go
 /Users/alejandromalavet/GitHub/grafana/apps/shorturl
-go get github.com/grafana/grafana-app-sdk@e54bc3b
+go get github.com/grafana/grafana-app-sdk@70dbf74
 go mod tidy
  * Writing file pkg/apis/shorturl/v1beta1/constants.go
  * Writing file pkg/apis/shorturl/v1beta1/shorturl_codec_gen.go
