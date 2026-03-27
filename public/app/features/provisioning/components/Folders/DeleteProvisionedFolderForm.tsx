@@ -79,7 +79,7 @@ function FormContent({ initialValues, parentFolder, repository, canPushToConfigu
       try {
         await deleteRepoFile({
           name: repo,
-          path: `${path}/`,
+          path,
           ref: branchRef,
           message: commitMessage,
         }).unwrap();
