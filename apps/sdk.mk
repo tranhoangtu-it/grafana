@@ -1,4 +1,4 @@
-APP_SDK_VERSION = e54bc3b
+APP_SDK_VERSION = 70dbf74
 APP_SDK_DIR     = $(shell go env GOPATH)/bin/app-sdk-$(APP_SDK_VERSION)
 APP_SDK_BIN     = $(APP_SDK_DIR)/grafana-app-sdk
 
