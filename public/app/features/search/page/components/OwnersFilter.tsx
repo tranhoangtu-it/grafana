@@ -68,8 +68,6 @@ export function OwnersFilter({ ownerReference, onChange }: OwnersFilterProps) {
             values.includes(ALL_TEAMS_VALUE) ? allTeamReferences : values.filter((value) => value !== ALL_TEAMS_VALUE)
           );
         }}
-        getOptionLabel={(option) => option.label}
-        getOptionValue={(option) => option.value ?? ''}
         noOptionsMessage={t('browse-dashboards.filters.owner-no-options', 'No teams found')}
         loadingMessage={t('browse-dashboards.filters.owner-loading', 'Loading teams...')}
         placeholder={t('browse-dashboards.filters.owner-placeholder', 'Filter by owner')}
