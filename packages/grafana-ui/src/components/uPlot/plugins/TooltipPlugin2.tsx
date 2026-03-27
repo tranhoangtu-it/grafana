@@ -15,9 +15,8 @@ import { getPortalContainer } from '../../Portal/Portal';
 import { UPlotConfigBuilder } from '../config/UPlotConfigBuilder';
 
 import { CloseButton } from './CloseButton';
-import { initConstVars, initMutatableVars } from './TooltipUtils';
+import { initConstVars } from './TooltipUtils';
 
-export const DEFAULT_TOOLTIP_WIDTH = undefined;
 export const TOOLTIP_OFFSET = 10;
 
 // todo: barchart? histogram?
@@ -123,6 +122,14 @@ export const TooltipPlugin2 = ({
   const [viaSync, setViaSync] = useState(false);
   const [winWid, setWinWidth] = useState(0);
   const [winHgt, setWinHeight] = useState(0);
+  const [pendingPinned, setPendingPinned] = useState(false);
+  const [dataLinks, setDataLinks] = useState<LinkModel[]>([]);
+  const [adHocFilters, setAdHocFilters] = useState<AdHocFilterModel[]>([]);
+  // // for onceClick link rendering during mousemoves we use these pre-generated first links or actions
+  // // these will be wrong if the titles have interpolation using the hovered *value*
+  // // but this should be quite rare. we'll fix it if someone actually encounters this
+  const [persistentLinks, setPersistentLinks] = useState<LinkModel[][]>([]);
+  const [yZoomed, setYZoomed] = useState(false);
 
   // Consts
   const syncTooltip = syncMode === DashboardCursorSync.Tooltip;
@@ -225,8 +232,9 @@ export const TooltipPlugin2 = ({
           if (seriesIndex === null) {
             throw new Error('[TooltipPlugin2::onClick] - seriesIndex not defined!');
           }
-          dataLinks = getLinksRef.current(closestSeriesIdx, seriesIndex);
-          adHocFilters = getAdHocFiltersRef.current(closestSeriesIdx, seriesIndex);
+          setDataLinks(getLinksRef.current(closestSeriesIdx, seriesIndex));
+          setAdHocFilters(getAdHocFiltersRef.current(closestSeriesIdx, seriesIndex));
+
           const oneClickLink = dataLinks.find((dataLink) => dataLink.oneClick === true);
 
           if (oneClickLink != null) {
@@ -255,7 +263,6 @@ export const TooltipPlugin2 = ({
 
   const getAdHocFiltersRef = useRef(getAdHocFilters);
   getAdHocFiltersRef.current = getAdHocFilters;
-  let { dataLinks, adHocFilters, persistentLinks, pendingPinned, yZoomed } = initMutatableVars();
 
   const { defaultStyles } = initConstVars(style);
 
@@ -268,88 +275,151 @@ export const TooltipPlugin2 = ({
     });
   }
 
-  // @todo externalize and pass in all state vars
-  function setTooltipContent(u: uPlot, hover = false) {
-    if (!u) {
-      throw new Error('[TooltipPlugin2::setTooltipContent] plot not initiated!');
-    }
-
-    setPendingRender(false);
-    let pointerEventsStyles: Partial<React.CSSProperties> | null = null;
-
-    if (pendingPinned) {
-      pointerEventsStyles = { pointerEvents: isPinned ? 'all' : 'none' };
-
-      //@ts-expect-error access private method @todo narrow
-      u.cursor['_lock'] = _isPinned;
-
-      if (isPinned) {
-        document.addEventListener('mousedown', downEventOutside, true);
-        document.addEventListener('keydown', downEventOutside, true);
-      } else {
-        document.removeEventListener('mousedown', downEventOutside, true);
-        document.removeEventListener('keydown', downEventOutside, true);
+  const renderTooltip = useCallback(
+    (u: uPlot, setHover = true) => {
+      if (!u) {
+        throw new Error('[TooltipPlugin2::renderTooltip] Plot is not defined!');
       }
 
-      pendingPinned = false;
-    }
+      console.log('[TooltipPlugin2::renderTooltip]', { isHovering, u, setHover, annotationRange });
 
-    // @todo clean up
-    // setStyle(pointerEventsStyles ?? defaultStyles);
-    // setIsPinned(isPinned);
-    if (hover !== isHovering) {
-      console.log('[TooltipPlugin2::setTooltipContent] setIsHovering');
-      setIsHovering(hover);
-    }
+      if (!pendingRender) {
+        setPendingRender(true);
+      }
 
-    const isWipAnnotationActive = annotationRange != null;
-    const isTooltipActive = isWipAnnotationActive || hover;
+      setIsHovering(setHover);
+    },
+    [annotationRange, isHovering, pendingRender]
+  );
 
-    console.log('[TooltipPlugin2::setTooltipContent] setTooltipContent', {
-      hover,
-      isWipAnnotationActive,
-      isPinned,
-      style: pointerEventsStyles ?? defaultStyles,
-      isTooltipActive,
+  const dismiss = useCallback(
+    (u: uPlot) => {
+      if (!u) {
+        throw new Error('[TooltipPlugin2::dismiss] - plot not initiated!');
+      }
+      console.log('[TooltipPlugin2::dismiss]', { isHovering, isPinned });
+      const prevIsPinned = isPinned;
+      setIsPinned(false);
+      setIsHovering(false);
+      setAnnotationRange(null);
+      u.setCursor({ left: -10, top: -10 });
+      setDataLinks([]);
+      setAdHocFilters([]);
+
+      console.log('[TooltipPlugin2::dismiss] renderTooltip');
+      renderTooltip(u, prevIsPinned);
+    },
+    [isHovering, isPinned, renderTooltip]
+  );
+
+  // in some ways this is similar to ClickOutsideWrapper.tsx
+  const downEventOutside = useCallback(
+    (e: Event) => {
+      if (!plot) {
+        throw new Error('[TooltipPlugin2::downEventOutside] plot is undefined!');
+      }
+      if (e instanceof KeyboardEvent) {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          dismiss(plot);
+        }
+        return;
+      }
+
+      // this tooltip is Portaled, but actions inside it create forms in Modals
+      const isModalOrPortaled = '[role="dialog"], #grafana-portal-container';
+
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      if ((e.target as HTMLElement).closest(isModalOrPortaled) == null) {
+        dismiss(plot);
+      }
+    },
+    [dismiss, plot]
+  );
+
+  // @todo externalize and pass in all state vars
+  const setTooltipContent = useCallback(
+    (u: uPlot, hover = false) => {
+      if (!u) {
+        throw new Error('[TooltipPlugin2::setTooltipContent] plot not initiated!');
+      }
+
+      setPendingRender(false);
+      let pointerEventsStyles: Partial<React.CSSProperties> | null = null;
+
+      if (pendingPinned) {
+        pointerEventsStyles = { pointerEvents: isPinned ? 'all' : 'none' };
+
+        //@ts-expect-error access private method @todo narrow
+        u.cursor['_lock'] = _isPinned;
+
+        if (isPinned) {
+          document.addEventListener('mousedown', downEventOutside, true);
+          document.addEventListener('keydown', downEventOutside, true);
+        } else {
+          document.removeEventListener('mousedown', downEventOutside, true);
+          document.removeEventListener('keydown', downEventOutside, true);
+        }
+
+        setPendingPinned(false);
+      }
+
+      // @todo clean up
+      // setStyle(pointerEventsStyles ?? defaultStyles);
+      // setIsPinned(isPinned);
+      if (hover !== isHovering) {
+        console.log('[TooltipPlugin2::setTooltipContent] setIsHovering');
+        setIsHovering(hover);
+      }
+
+      const isWipAnnotationActive = annotationRange != null;
+      const isTooltipActive = isWipAnnotationActive || hover;
+
+      console.log('[TooltipPlugin2::setTooltipContent] setTooltipContent', {
+        hover,
+        isWipAnnotationActive,
+        isPinned,
+        style: pointerEventsStyles ?? defaultStyles,
+        isTooltipActive,
+        annotationRange,
+      });
+
+      setContent(
+        isTooltipActive
+          ? renderRef.current(
+              u,
+              seriesIdxs,
+              closestSeriesIdx,
+              isPinned,
+              dismiss,
+              annotationRange,
+              viaSync,
+              isPinned ? dataLinks : closestSeriesIdx != null ? persistentLinks[closestSeriesIdx] : [],
+              isPinned ? adHocFilters : []
+            )
+          : null
+      );
+
+      // TODO: set u.over.style.cursor = 'pointer' if we hovered a oneClick point
+      // else revert to default...but only when the new pointer is different from prev
+    },
+    [
+      adHocFilters,
       annotationRange,
-    });
-
-    setContent(
-      isTooltipActive
-        ? renderRef.current(
-            u,
-            seriesIdxs,
-            closestSeriesIdx,
-            isPinned,
-            dismiss,
-            annotationRange,
-            viaSync,
-            isPinned ? dataLinks : closestSeriesIdx != null ? persistentLinks[closestSeriesIdx] : [],
-            isPinned ? adHocFilters : []
-          )
-        : null
-    );
-
-    // TODO: set u.over.style.cursor = 'pointer' if we hovered a oneClick point
-    // else revert to default...but only when the new pointer is different from prev
-  }
-
-  function dismiss(u: uPlot) {
-    if (!u) {
-      throw new Error('[TooltipPlugin2::dismiss] - plot not initiated!');
-    }
-    console.log('[TooltipPlugin2::dismiss]', { isHovering, isPinned });
-    const prevIsPinned = isPinned;
-    setIsPinned(false);
-    setIsHovering(false);
-    setAnnotationRange(null);
-    u.setCursor({ left: -10, top: -10 });
-    dataLinks = [];
-    adHocFilters = [];
-
-    console.log('[TooltipPlugin2::dismiss] renderTooltip');
-    renderTooltip(u, prevIsPinned);
-  }
+      closestSeriesIdx,
+      dataLinks,
+      defaultStyles,
+      dismiss,
+      downEventOutside,
+      isHovering,
+      isPinned,
+      pendingPinned,
+      persistentLinks,
+      seriesIdxs,
+      viaSync,
+    ]
+  );
 
   const hasSomeSeriesIdx = useCallback(() => {
     return seriesIdxs.some((v, i) => i > 0 && v != null);
@@ -362,7 +432,7 @@ export const TooltipPlugin2 = ({
     }
 
     setTooltipContent(plot);
-  }, [annotationRange, plot]);
+  }, [annotationRange, plot, setTooltipContent]);
 
   // set tooltip on hovering state change
   useEffect(() => {
@@ -380,66 +450,35 @@ export const TooltipPlugin2 = ({
       console.log('winWid', winWid);
     }
     // @todo audit these
-  }, [isHovering, plot, seriesIdxs, offsetX, offsetY, plotVisible, yDrag, plotVisible, isPinned, winHgt, winWid]);
+  }, [isHovering, plot, seriesIdxs, offsetX, offsetY, plotVisible, yDrag, isPinned, winHgt, winWid, setTooltipContent]);
 
-  const renderTooltip = useCallback((u: uPlot, setHover = true) => {
-    if (!u) {
-      throw new Error('[TooltipPlugin2::renderTooltip] Plot is not defined!');
-    }
+  const updateWinSize = useCallback(
+    (u: uPlot) => {
+      isHovering && !isPinned && dismiss(u);
 
-    console.log('[TooltipPlugin2::renderTooltip]', { isHovering, u, setHover, annotationRange });
+      setWinWidth(window.innerWidth - scrollbarWidth);
+      setWinHeight(window.innerHeight - scrollbarWidth);
+    },
+    [dismiss, isHovering, isPinned]
+  );
 
-    if (!pendingRender) {
-      setPendingRender(true);
-    }
-
-    setIsHovering(setHover);
-  }, []);
-
-  function updateWinSize(u: uPlot) {
-    isHovering && !isPinned && dismiss(u);
-
-    setWinWidth(window.innerWidth - scrollbarWidth);
-    setWinHeight(window.innerHeight - scrollbarWidth);
-  }
-
-  function updatePlotVisible(plot: uPlot | null) {
-    if (!plot) {
-      throw new Error('[updatePlotVisible] Plot not initiated!');
-    }
-    setPlotVisible(
-      plot.rect.bottom <= winHgt && plot.rect.top >= 0 && plot.rect.left >= 0 && plot.rect.right <= winWid
-    );
-  }
+  const updatePlotVisible = useCallback(
+    (plot: uPlot | null) => {
+      if (!plot) {
+        throw new Error('[updatePlotVisible] Plot not initiated!');
+      }
+      setPlotVisible(
+        plot.rect.bottom <= winHgt && plot.rect.top >= 0 && plot.rect.left >= 0 && plot.rect.right <= winWid
+      );
+    },
+    [winHgt, winWid]
+  );
 
   const isUserHovering = useCallback(() => {
     return viaSync
       ? plotVisible && hasSomeSeriesIdx() && syncTooltip
       : closestSeriesIdx != null || (hoverMode === TooltipHoverMode.xAll && hasSomeSeriesIdx());
-  }, [viaSync, plotVisible]);
-
-  // in some ways this is similar to ClickOutsideWrapper.tsx
-  const downEventOutside = useCallback((e: Event) => {
-    if (!plot) {
-      throw new Error('[TooltipPlugin2::downEventOutside] plot is undefined!');
-    }
-    if (e instanceof KeyboardEvent) {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        dismiss(plot);
-      }
-      return;
-    }
-
-    // this tooltip is Portaled, but actions inside it create forms in Modals
-    const isModalOrPortaled = '[role="dialog"], #grafana-portal-container';
-
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    if ((e.target as HTMLElement).closest(isModalOrPortaled) == null) {
-      dismiss(plot);
-    }
-  }, []);
+  }, [viaSync, plotVisible, hasSomeSeriesIdx, syncTooltip, closestSeriesIdx, hoverMode]);
 
   // fires on data value hovers/unhovers
   usePlotConfigHook(config, 'setLegend', (u) => {
@@ -450,18 +489,20 @@ export const TooltipPlugin2 = ({
     const seriesIndiciesTmp = u.cursor.idxs.slice();
     setSeriesIdxs(seriesIndiciesTmp);
     if (persistentLinks.length === 0) {
-      persistentLinks = seriesIndiciesTmp.map((v, seriesIdx) => {
-        if (seriesIdx > 0) {
-          const links = getDataLinks(seriesIdx, seriesIndiciesTmp[seriesIdx]!);
-          const oneClickLink = links.find((dataLink) => dataLink.oneClick === true);
+      setPersistentLinks(
+        seriesIndiciesTmp.map((v, seriesIdx) => {
+          if (seriesIdx > 0) {
+            const links = getDataLinks(seriesIdx, seriesIndiciesTmp[seriesIdx]!);
+            const oneClickLink = links.find((dataLink) => dataLink.oneClick === true);
 
-          if (oneClickLink) {
-            return [oneClickLink];
+            if (oneClickLink) {
+              return [oneClickLink];
+            }
           }
-        }
 
-        return [];
-      });
+          return [];
+        })
+      );
     }
 
     setViaSync(u.cursor.event == null);
@@ -553,7 +594,7 @@ export const TooltipPlugin2 = ({
               }
             }
 
-            yZoomed = true;
+            setYZoomed(true);
           }
 
           setYDrag(false);
@@ -568,7 +609,7 @@ export const TooltipPlugin2 = ({
 
             queryZoom({ from: minX, to: maxX });
 
-            yZoomed = false;
+            setYZoomed(false);
           }
         }
       } else {
@@ -587,7 +628,7 @@ export const TooltipPlugin2 = ({
     u.setSelect({ left: 0, width: 0, top: 0, height: 0 }, false);
   });
   usePlotConfigHook(config, 'setData', (u) => {
-    yZoomed = false;
+    setYZoomed(false);
     setYDrag(false);
 
     if (isPinned) {
@@ -729,7 +770,7 @@ export const TooltipPlugin2 = ({
                 }
               }
 
-              yZoomed = false;
+              setYZoomed(false);
             } else if (queryZoom != null) {
               let xScale = u.scales.x;
 
@@ -765,7 +806,18 @@ export const TooltipPlugin2 = ({
       document.removeEventListener('mousedown', downEventOutside, true);
       document.removeEventListener('keydown', downEventOutside, true);
     };
-  }, [config, plot]);
+  }, [
+    clientZoom,
+    config,
+    dismiss,
+    downEventOutside,
+    isHovering,
+    plot,
+    queryZoom,
+    updatePlotVisible,
+    updateWinSize,
+    yZoomed,
+  ]);
 
   useLayoutEffect(() => {
     const size = sizeRef.current;
@@ -826,7 +878,7 @@ export const TooltipPlugin2 = ({
         true
       );
     }
-  }, [isHovering]);
+  }, [isHovering, plot]);
 
   const isRenderingTooltip = plot && isHovering;
   console.log('[TooltipPlugin2::RENDER]', { annotationRange, isPinned, isHovering, isRenderingTooltip });

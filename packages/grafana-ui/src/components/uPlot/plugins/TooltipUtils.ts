@@ -12,14 +12,12 @@ export function initMutatableVars(): LocalMutatableVars {
   // these will be wrong if the titles have interpolation using the hovered *value*
   // but this should be quite rare. we'll fix it if someone actually encounters this
   const persistentLinks: LinkModel[][] = [];
-  const pendingPinned = false;
   const yZoomed = false;
 
   return {
     dataLinks,
     adHocFilters,
     persistentLinks,
-    pendingPinned,
     yZoomed,
   };
 }

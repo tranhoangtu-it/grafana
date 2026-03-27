@@ -234,8 +234,8 @@ module.exports = [
     name: 'grafana/uplot-overrides',
     files: ['packages/grafana-ui/src/components/uPlot/**/*.{ts,tsx}'],
     rules: {
-      'react-hooks/rules-of-hooks': 'off',
-      'react-hooks/exhaustive-deps': 'off',
+      // 'react-hooks/rules-of-hooks': 'off',
+      // 'react-hooks/exhaustive-deps': 'off',
     },
   },
   {
