@@ -1,11 +1,20 @@
 import { useMemo } from 'react';
 
-import { DataFrame, Field, getFieldDisplayName, FieldNamePickerBaseNameMode, FieldType } from '@grafana/data';
+import {
+  DataFrame,
+  Field,
+  getFieldDisplayName,
+  FieldNamePickerBaseNameMode,
+  FieldType,
+  SelectableValue,
+} from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { MatcherScope } from '@grafana/schema';
 
 import { getFieldTypeIcon } from '../../types/icon';
 import { ComboboxOption } from '../Combobox/types';
+
+import { fieldMatchersUI } from './fieldMatchersUI';
 
 /**
  * @internal
@@ -231,4 +240,15 @@ export function useMatcherSelectOptions(
 
 export function getUniqueMatcherScopes(data: DataFrame[]): Set<MatcherScope> {
   return new Set([...getFrameFieldsDisplayNames(data).scopes.values()]);
+}
+
+/**
+ * Returns all field matchers suitable for user-facing pickers.
+ * Excludes matchers that have `excludeFromPicker: true` (e.g. logical combinators like any/all/not).
+ */
+export function getPickerFieldMatchers(): Array<SelectableValue<string>> {
+  return fieldMatchersUI
+    .list()
+    .filter((o) => !o.excludeFromPicker)
+    .map((i) => ({ label: i.name, value: i.id, description: i.description }));
 }
