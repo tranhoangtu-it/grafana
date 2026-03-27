@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { chain } from 'lodash';
+import { chain, truncate } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useMeasure } from 'react-use';
 
@@ -16,6 +16,7 @@ import {
   TabContent,
   TabsBar,
   Text,
+  TextLink,
   useStyles2,
   withErrorBoundary,
 } from '@grafana/ui';
@@ -53,7 +54,7 @@ import {
   ruleIdentifierToRuleSourceIdentifier,
 } from '../../utils/datasource';
 import { labelsSize } from '../../utils/labels';
-import { stringifyErrorLike } from '../../utils/misc';
+import { makeDashboardLink, makePanelLink, stringifyErrorLike } from '../../utils/misc';
 import { createListFilterLink, groups } from '../../utils/navigation';
 import {
   RulePluginOrigin,
@@ -67,6 +68,7 @@ import {
 import { AlertingPageWrapper } from '../AlertingPageWrapper';
 import { InhibitionRulesAlert } from '../InhibitionRulesAlert';
 import { ProvisionedResource, ProvisioningAlert } from '../Provisioning';
+import { WithReturnButton } from '../WithReturnButton';
 import { decodeGrafanaNamespace } from '../expressions/util';
 import { RedirectToCloneRule } from '../rules/CloneRule';
 
@@ -227,10 +229,44 @@ const RuleViewer = () => {
 };
 
 const createMetadata = (rule: CombinedRule): PageInfoItem[] => {
-  const { labels } = rule;
+  const { labels, annotations } = rule;
   const metadata: PageInfoItem[] = [];
 
+  const dashboardUID = annotations[Annotation.dashboardUID];
+  const panelID = annotations[Annotation.panelID];
+  const hasDashboardAndPanel = dashboardUID && panelID;
+  const hasDashboard = dashboardUID;
   const hasLabels = labelsSize(labels) > 0;
+
+  if (hasDashboardAndPanel) {
+    metadata.push({
+      label: t('alerting.create-metadata.label.dashboard-and-panel', 'Dashboard and panel'),
+      value: (
+        <WithReturnButton
+          title={rule.name}
+          component={
+            <TextLink variant="bodySmall" href={makePanelLink(dashboardUID, panelID)}>
+              <Trans i18nKey="alerting.create-metadata.view-panel">View panel</Trans>
+            </TextLink>
+          }
+        />
+      ),
+    });
+  } else if (hasDashboard) {
+    metadata.push({
+      label: t('alerting.create-metadata.label.dashboard', 'Dashboard'),
+      value: (
+        <WithReturnButton
+          title={rule.name}
+          component={
+            <TextLink title={rule.name} variant="bodySmall" href={makeDashboardLink(dashboardUID)}>
+              <Trans i18nKey="alerting.create-metadata.view-dashboard">View dashboard</Trans>
+            </TextLink>
+          }
+        />
+      ),
+    });
+  }
 
   if (hasLabels) {
     metadata.push({
