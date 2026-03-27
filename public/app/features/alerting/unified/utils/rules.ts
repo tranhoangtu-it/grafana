@@ -1,5 +1,6 @@
 import { capitalize } from 'lodash';
 
+import { USER_DEFINED_TREE_NAME } from '@grafana/alerting';
 import { AlertState } from '@grafana/data';
 import {
   Alert,
@@ -25,6 +26,7 @@ import {
   GrafanaAlertState,
   GrafanaAlertStateWithReason,
   GrafanaAlertingRuleDefinition,
+  GrafanaNotificationSettings,
   GrafanaPromAlertingRuleDTO,
   GrafanaPromRecordingRuleDTO,
   GrafanaRecordingRuleDefinition,
@@ -64,6 +66,16 @@ function isGrafanaAlertingRule(rule?: RulerRuleDTO): rule is RulerGrafanaRuleDTO
 
 function isGrafanaRecordingRule(rule?: RulerRuleDTO): rule is RulerGrafanaRuleDTO<GrafanaRecordingRuleDefinition> {
   return isGrafanaRulerRule(rule) && 'record' in rule.grafana_alert;
+}
+
+export function ruleUsesDefaultPolicy(notificationSettings?: GrafanaNotificationSettings): boolean {
+  if (notificationSettings?.receiver) {
+    return false;
+  }
+  if (notificationSettings?.policy && notificationSettings.policy !== USER_DEFINED_TREE_NAME) {
+    return false;
+  }
+  return true;
 }
 
 export function isPausedRule(rule: RulerGrafanaRuleDTO) {
