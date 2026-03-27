@@ -8,7 +8,6 @@ import { useSearchTeamsQuery } from 'app/api/clients/legacy';
 import { teamOwnerRef } from 'app/features/browse-dashboards/utils/dashboards';
 
 const ALL_TEAMS_VALUE = '__all-teams__';
-const collator = new Intl.Collator();
 
 interface OwnersFilterProps {
   ownerReference: string[];
@@ -17,26 +16,33 @@ interface OwnersFilterProps {
 
 export function OwnersFilter({ ownerReference, onChange }: OwnersFilterProps) {
   const styles = useStyles2(getStyles);
-  const { data, isLoading } = useSearchTeamsQuery({ perpage: 100 });
+  // At this point we have hard limit for number of items we show. The issue is we are using MultiSelect because of
+  // some UX bug (it opens only when clicking on internal input, not the full element) in Combobox but Multiselect
+  // then does not allow for async options loading.
+  const { data, isLoading } = useSearchTeamsQuery({ perpage: 200, sort: 'name-asc' });
 
   const teamOptions = useMemo<Array<SelectableValue<string>>>(() => {
     if (!data?.teams) {
       return [];
     }
-    return data.teams
-      .map((team) => ({
-        label: team.name,
-        value: teamOwnerRef(team),
-        imgUrl: team.avatarUrl,
-      }))
-      .sort((a, b) => collator.compare(a.label ?? '', b.label ?? ''));
+    return data.teams.map((team) => ({
+      label: team.name,
+      value: teamOwnerRef(team),
+      imgUrl: team.avatarUrl,
+    }));
   }, [data?.teams]);
 
-  const allTeamReferences = useMemo(() => {
-    return teamOptions.flatMap((option) => (option.value ? [option.value] : []));
-  }, [teamOptions]);
+  const allTeamsValue = useMemo(() => {
+    return {
+      label: t('browse-dashboards.filters.all-teams', 'All teams'),
+      value: ALL_TEAMS_VALUE,
+    };
+  }, []);
 
-  const allTeamsLabel = t('browse-dashboards.filters.all-teams', 'All teams');
+  const allTeamReferences = useMemo(() => {
+    // option.value is UID of the team. This needs to exist always so we should be able to use ! here.
+    return teamOptions.map((option) => option.value!);
+  }, [teamOptions]);
 
   const hasAllTeamsSelected =
     ownerReference.length > 0 &&
@@ -45,16 +51,15 @@ export function OwnersFilter({ ownerReference, onChange }: OwnersFilterProps) {
     allTeamReferences.every((reference) => ownerReference.includes(reference));
 
   const value = hasAllTeamsSelected
-    ? [{ label: allTeamsLabel, value: ALL_TEAMS_VALUE }]
+    ? [allTeamsValue]
     : teamOptions.filter((option) => option.value && ownerReference.includes(option.value));
 
   const options = useMemo<Array<SelectableValue<string>>>(() => {
     if (teamOptions.length === 0) {
       return [];
     }
-
-    return [{ label: allTeamsLabel, value: ALL_TEAMS_VALUE }, ...teamOptions];
-  }, [teamOptions, allTeamsLabel]);
+    return [allTeamsValue, ...teamOptions];
+  }, [teamOptions, allTeamsValue]);
 
   return (
     <div className={styles.ownerFilter}>
@@ -63,7 +68,7 @@ export function OwnersFilter({ ownerReference, onChange }: OwnersFilterProps) {
         options={options}
         value={value}
         onChange={(selectedOptions) => {
-          const values = (selectedOptions ?? []).flatMap((option) => (option.value ? [option.value] : []));
+          const values = selectedOptions.map((option) => option.value!);
           onChange(
             values.includes(ALL_TEAMS_VALUE) ? allTeamReferences : values.filter((value) => value !== ALL_TEAMS_VALUE)
           );
