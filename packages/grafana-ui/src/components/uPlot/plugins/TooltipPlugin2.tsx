@@ -1,6 +1,6 @@
 import { css, cx } from '@emotion/css';
 import * as React from 'react';
-import { CSSProperties, useLayoutEffect, useReducer, useRef } from 'react';
+import { CSSProperties, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import uPlot from 'uplot';
 
@@ -15,6 +15,7 @@ import { getPortalContainer } from '../../Portal/Portal';
 import { UPlotConfigBuilder } from '../config/UPlotConfigBuilder';
 
 import { CloseButton } from './CloseButton';
+import { initConstVars, initMutatableVars } from './TooltipUtils';
 
 export const DEFAULT_TOOLTIP_WIDTH = undefined;
 export const TOOLTIP_OFFSET = 10;
@@ -83,17 +84,6 @@ export interface TimeRange2 {
   to: number;
 }
 
-function mergeState(prevState: TooltipContainerState, nextState: Partial<TooltipContainerState>) {
-  return {
-    ...prevState,
-    ...nextState,
-    style: {
-      ...prevState.style,
-      ...nextState.style,
-    },
-  };
-}
-
 function initState(): TooltipContainerState {
   return {
     style: { transform: '', pointerEvents: 'none' },
@@ -114,96 +104,6 @@ const getAdHocFiltersFallback: GetAdHocFiltersCallback = () => [];
 
 const userAgentIsMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
-interface LocalVars {
-  selectedRange: TimeRange2 | null;
-  yDrag: boolean;
-  offsetX: number;
-  offsetY: number;
-  seriesIdxs: Array<number | null>;
-  closestSeriesIdx: number | null;
-  viaSync: boolean;
-  dataLinks: LinkModel[];
-  adHocFilters: AdHocFilterModel[];
-  persistentLinks: LinkModel[][];
-  pendingRender: boolean;
-  pendingPinned: boolean;
-  yZoomed: boolean;
-  _isHovering: boolean;
-  _someSeriesIdx: boolean;
-  _isPinned: boolean;
-  _style: Partial<CSSProperties>;
-  plotVisible: boolean;
-  scrollbarWidth: number;
-  winWid: number;
-  winHgt: number;
-  syncTooltip: boolean;
-}
-
-const initLocalVars = (
-  isHovering: boolean,
-  isPinned: boolean,
-  style: Partial<React.CSSProperties>,
-  syncMode: DashboardCursorSync | undefined
-) => {
-  let yDrag = false;
-
-  let offsetX = 0;
-  let offsetY = 0;
-
-  let selectedRange: TimeRange2 | null = null;
-  let seriesIdxs: Array<number | null> = [];
-  let closestSeriesIdx: number | null = null;
-  let viaSync = false;
-  let dataLinks: LinkModel[] = [];
-  let adHocFilters: AdHocFilterModel[] = [];
-
-  // for onceClick link rendering during mousemoves we use these pre-generated first links or actions
-  // these will be wrong if the titles have interpolation using the hovered *value*
-  // but this should be quite rare. we'll fix it if someone actually encounters this
-  let persistentLinks: LinkModel[][] = [];
-
-  let pendingRender = false;
-  let pendingPinned = false;
-
-  let yZoomed = false;
-  let _isHovering = isHovering;
-  let _someSeriesIdx = false;
-  let _isPinned = isPinned;
-  let _style = style;
-
-  let plotVisible = false;
-
-  // Window vars
-  const scrollbarWidth = 16;
-  let winWid = 0;
-  let winHgt = 0;
-
-  const syncTooltip = syncMode === DashboardCursorSync.Tooltip;
-  return {
-    yDrag,
-    offsetX,
-    offsetY,
-    selectedRange,
-    seriesIdxs,
-    closestSeriesIdx,
-    viaSync,
-    dataLinks,
-    adHocFilters,
-    persistentLinks,
-    pendingRender,
-    pendingPinned,
-    yZoomed,
-    _isHovering,
-    _someSeriesIdx,
-    _isPinned,
-    _style,
-    plotVisible,
-    scrollbarWidth,
-    winWid,
-    winHgt,
-    syncTooltip,
-  };
-};
 /**
  * @alpha
  */
@@ -220,8 +120,16 @@ export const TooltipPlugin2 = ({
   getDataLinks = getDataLinksFallback,
   getAdHocFilters = getAdHocFiltersFallback,
 }: TooltipPlugin2Props) => {
+  const styles = useStyles2(getStyles, maxWidth);
   const domRef = useRef<HTMLDivElement>(null);
   const portalRoot = useRef<HTMLElement | null>(null);
+
+  // React state
+  const initialState = initState();
+  const [isHovering, setIsHovering] = useState(initialState.isHovering);
+  const [isPinned, setIsPinned] = useState(initialState.isPinned);
+  const [tooltipContent, setTooltipContent] = useState(initialState.contents);
+  const [style, setStyle] = useState(initialState.style);
 
   if (portalRoot.current == null) {
     portalRoot.current = getPortalContainer();
@@ -303,7 +211,7 @@ export const TooltipPlugin2 = ({
           scheduleRender(false);
         }
         // if tooltip visible, not pinned, and within proximity to a series/point
-        else if (_isHovering && !_isPinned && closestSeriesIdx != null) {
+        else if (isHovering && !_isPinned && closestSeriesIdx != null) {
           dataLinks = getLinksRef.current(closestSeriesIdx, seriesIdxs[closestSeriesIdx]!);
           adHocFilters = getAdHocFiltersRef.current(closestSeriesIdx, seriesIdxs[closestSeriesIdx]!);
           const oneClickLink = dataLinks.find((dataLink) => dataLink.oneClick === true);
@@ -311,10 +219,8 @@ export const TooltipPlugin2 = ({
           if (oneClickLink != null) {
             window.open(oneClickLink.href, oneClickLink.target ?? '_self');
           } else {
-            setTimeout(() => {
-              _isPinned = true;
-              scheduleRender(true);
-            }, 0);
+            setIsPinned(true);
+            scheduleRender(true);
           }
         }
       }
@@ -323,11 +229,8 @@ export const TooltipPlugin2 = ({
     console.log('init complete');
   });
 
-  const [{ isHovering, isPinned, contents, style }, setState] = useReducer(mergeState, null, initState);
-
+  // Refs
   const sizeRef = useRef<TooltipContainerSize | undefined>(undefined);
-  const styles = useStyles2(getStyles, maxWidth);
-
   const renderRef = useRef(render);
   renderRef.current = render;
 
@@ -350,16 +253,16 @@ export const TooltipPlugin2 = ({
     pendingRender,
     pendingPinned,
     yZoomed,
-    _isHovering,
     _someSeriesIdx,
     _isPinned,
-    _style,
     plotVisible,
     scrollbarWidth,
     winWid,
     winHgt,
     syncTooltip,
-  }: LocalVars = initLocalVars(isHovering, isPinned, style, syncMode);
+  } = initMutatableVars(isPinned, syncMode);
+
+  const { defaultStyles } = initConstVars(style);
 
   if (syncMode !== DashboardCursorSync.Off && config.scales[0].props.isTime) {
     config.setCursor({
@@ -370,11 +273,15 @@ export const TooltipPlugin2 = ({
     });
   }
 
-  function _render() {
+  function setTooltipState() {
+    if (!plot) {
+      throw new Error('[TooltipPlugin2::setTooltipState] plot not initiated!');
+    }
     pendingRender = false;
+    let pointerEventsStyles: Partial<React.CSSProperties> | null = null;
 
     if (pendingPinned) {
-      _style = { pointerEvents: _isPinned ? 'all' : 'none' };
+      pointerEventsStyles = { pointerEvents: _isPinned ? 'all' : 'none' };
 
       //@ts-expect-error
       plot.cursor['_lock'] = _isPinned;
@@ -390,28 +297,25 @@ export const TooltipPlugin2 = ({
       pendingPinned = false;
     }
 
-    let state: TooltipContainerState = {
-      style: _style,
-      isPinned: _isPinned,
-      isHovering: _isHovering,
-      contents:
-        _isHovering || selectedRange != null
-          ? renderRef.current(
-              plot!,
-              seriesIdxs,
-              closestSeriesIdx,
-              _isPinned,
-              dismiss,
-              selectedRange,
-              viaSync,
-              _isPinned ? dataLinks : closestSeriesIdx != null ? persistentLinks[closestSeriesIdx] : [],
-              _isPinned ? adHocFilters : []
-            )
-          : null,
-      dismiss,
-    };
-
-    setState(state);
+    // @todo clean up
+    setStyle(pointerEventsStyles ?? defaultStyles);
+    setIsPinned(_isPinned);
+    // setIsHovering(true);
+    setTooltipContent(
+      isHovering || selectedRange != null
+        ? renderRef.current(
+            plot,
+            seriesIdxs,
+            closestSeriesIdx,
+            _isPinned,
+            dismiss,
+            selectedRange,
+            viaSync,
+            _isPinned ? dataLinks : closestSeriesIdx != null ? persistentLinks[closestSeriesIdx] : [],
+            _isPinned ? adHocFilters : []
+          )
+        : null
+    );
 
     // TODO: set u.over.style.cursor = 'pointer' if we hovered a oneClick point
     // else revert to default...but only when the new pointer is different from prev
@@ -423,9 +327,9 @@ export const TooltipPlugin2 = ({
     if (!plot) {
       throw new Error('[TooltipPlugin2::dismiss] - plot not initiated!');
     }
-    let prevIsPinned = _isPinned;
-    _isPinned = false;
-    _isHovering = false;
+    const prevIsPinned = isPinned;
+    setIsPinned(false);
+    setIsHovering(false);
     plot.setCursor({ left: -10, top: -10 });
     dataLinks = [];
     adHocFilters = [];
@@ -436,10 +340,10 @@ export const TooltipPlugin2 = ({
   function scheduleRender(setPinned = false) {
     if (!pendingRender) {
       // defer unrender for 100ms to reduce flickering in small gaps
-      if (!_isHovering) {
-        setTimeout(_render, 100);
+      if (!isHovering) {
+        setTimeout(setTooltipState, 100);
       } else {
-        queueMicrotask(_render);
+        queueMicrotask(setTooltipState);
       }
 
       pendingRender = true;
@@ -452,7 +356,7 @@ export const TooltipPlugin2 = ({
 
   // @todo don't run on every render
   function updateWinSize() {
-    _isHovering && !_isPinned && dismiss();
+    isHovering && !_isPinned && dismiss();
 
     winWid = window.innerWidth - scrollbarWidth;
     winHgt = window.innerHeight - scrollbarWidth;
@@ -466,11 +370,12 @@ export const TooltipPlugin2 = ({
   }
 
   function updateHovering() {
-    if (viaSync) {
-      _isHovering = plotVisible && _someSeriesIdx && syncTooltip;
-    } else {
-      _isHovering = closestSeriesIdx != null || (hoverMode === TooltipHoverMode.xAll && _someSeriesIdx);
-    }
+    const _isHovering = viaSync
+      ? plotVisible && _someSeriesIdx && syncTooltip
+      : closestSeriesIdx != null || (hoverMode === TooltipHoverMode.xAll && _someSeriesIdx);
+
+    setIsHovering(_isHovering);
+    return _isHovering;
   }
 
   // in some ways this is similar to ClickOutsideWrapper.tsx
@@ -517,10 +422,10 @@ export const TooltipPlugin2 = ({
     }
 
     viaSync = u.cursor.event == null;
-    let prevIsHovering = _isHovering;
-    updateHovering();
+    let prevIsHovering = isHovering;
+    const currentIsHovering = updateHovering();
 
-    if (_isHovering || _isHovering !== prevIsHovering) {
+    if (currentIsHovering || currentIsHovering !== prevIsHovering) {
       scheduleRender();
     }
   });
@@ -657,7 +562,7 @@ export const TooltipPlugin2 = ({
 
     viaSync = u.cursor.event == null;
 
-    if (!_isHovering) {
+    if (!isHovering) {
       return;
     }
 
@@ -709,10 +614,11 @@ export const TooltipPlugin2 = ({
 
       transform = `translateX(${shiftX}px) ${reflectX} translateY(${shiftY}px) ${reflectY}`;
 
+      // @todo fix mutating domRef styles
       if (domRef.current != null) {
         domRef.current.style.transform = transform;
       } else {
-        _style.transform = transform;
+        setStyle({ ...style, transform });
         scheduleRender();
       }
     }
@@ -782,7 +688,7 @@ export const TooltipPlugin2 = ({
 
     const onscroll = (e: Event) => {
       updatePlotVisible(plot);
-      _isHovering && e.target instanceof Node && e.target.contains(plot!.root) && dismiss();
+      isHovering && e.target instanceof Node && e.target.contains(plot!.root) && dismiss();
     };
 
     window.addEventListener('resize', updateWinSize);
@@ -873,7 +779,7 @@ export const TooltipPlugin2 = ({
         ref={domRef}
       >
         {isPinned && <CloseButton onClick={dismiss} />}
-        {contents}
+        {tooltipContent}
       </div>,
       portalRoot.current
     );
