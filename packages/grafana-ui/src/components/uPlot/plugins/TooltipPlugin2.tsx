@@ -114,6 +114,91 @@ const getAdHocFiltersFallback: GetAdHocFiltersCallback = () => [];
 
 const userAgentIsMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
+interface LocalVars {
+  selectedRange: TimeRange2 | null;
+  yDrag: any
+  offsetX: any
+  offsetY: any
+  seriesIdxs: any
+  closestSeriesIdx: any
+  viaSync: any
+  dataLinks: any
+  adHocFilters: any
+  persistentLinks: any
+  pendingRender: any
+  pendingPinned: any
+  yZoomed: any
+  _isHovering: any
+  _someSeriesIdx: any
+  _isPinned: any
+  _style: any
+  plotVisible: any
+  scrollbarWidth: any
+  winWid: any
+  winHgt: any
+  syncTooltip: any
+}
+
+const initLocalVars = (isHovering: boolean, isPinned: boolean, style: Partial<React.CSSProperties>, syncMode: DashboardCursorSync | undefined) => {
+  let yDrag = false;
+
+  let offsetX = 0;
+  let offsetY = 0;
+
+  let selectedRange: TimeRange2 | null = null;
+  let seriesIdxs: Array<number | null> = [];
+  let closestSeriesIdx: number | null = null;
+  let viaSync = false;
+  let dataLinks: LinkModel[] = [];
+  let adHocFilters: AdHocFilterModel[] = [];
+
+  // for onceClick link rendering during mousemoves we use these pre-generated first links or actions
+  // these will be wrong if the titles have interpolation using the hovered *value*
+  // but this should be quite rare. we'll fix it if someone actually encounters this
+  let persistentLinks: LinkModel[][] = [];
+
+  let pendingRender = false;
+  let pendingPinned = false;
+
+  let yZoomed = false;
+  let _isHovering = isHovering;
+  let _someSeriesIdx = false;
+  let _isPinned = isPinned;
+  let _style = style;
+
+  let plotVisible = false;
+
+  // Window vars
+  const scrollbarWidth = 16;
+  let winWid = 0;
+  let winHgt = 0;
+
+  const syncTooltip = syncMode === DashboardCursorSync.Tooltip;
+  return {
+    yDrag,
+    offsetX,
+    offsetY,
+    selectedRange,
+    seriesIdxs,
+    closestSeriesIdx,
+    viaSync,
+    dataLinks,
+    adHocFilters,
+    persistentLinks,
+    pendingRender,
+    pendingPinned,
+    yZoomed,
+    _isHovering,
+    _someSeriesIdx,
+    _isPinned,
+    _style,
+    plotVisible,
+    scrollbarWidth,
+    winWid,
+    winHgt,
+    syncTooltip
+  };
+}
 /**
  * @alpha
  */
@@ -230,7 +315,7 @@ export const TooltipPlugin2 = ({
       }
     });
 
-    console.log('plotSet');
+    console.log('init complete');
   });
 
   const [{ isHovering, isPinned, contents, style }, setState] = useReducer(mergeState, null, initState);
@@ -246,38 +331,41 @@ export const TooltipPlugin2 = ({
 
   const getAdHocFiltersRef = useRef(getAdHocFilters);
   getAdHocFiltersRef.current = getAdHocFilters;
+  let {
+    yDrag,
+    offsetX,
+    offsetY,
+    selectedRange,
+    seriesIdxs,
+    closestSeriesIdx,
+    viaSync,
+    dataLinks,
+    adHocFilters,
+    persistentLinks,
+    pendingRender,
+    pendingPinned,
+    yZoomed,
+    _isHovering,
+    _someSeriesIdx,
+    _isPinned,
+    _style,
+    plotVisible,
+    scrollbarWidth,
+    winWid,
+    winHgt,
+    syncTooltip,
+  }: LocalVars = initLocalVars(isHovering, isPinned, style, syncMode);
 
-  let yDrag = false;
+  if (syncMode !== DashboardCursorSync.Off && config.scales[0].props.isTime) {
+    config.setCursor({
+      sync: {
+        key: syncScope,
+        scales: ['x', null],
+      },
+    });
+  }
 
-  let offsetX = 0;
-  let offsetY = 0;
-
-  let selectedRange: TimeRange2 | null = null;
-  let seriesIdxs: Array<number | null> = [];
-  let closestSeriesIdx: number | null = null;
-  let viaSync = false;
-  let dataLinks: LinkModel[] = [];
-  let adHocFilters: AdHocFilterModel[] = [];
-
-  // for onceClick link rendering during mousemoves we use these pre-generated first links or actions
-  // these will be wrong if the titles have interpolation using the hovered *value*
-  // but this should be quite rare. we'll fix it if someone actually encounters this
-  let persistentLinks: LinkModel[][] = [];
-
-  let pendingRender = false;
-  let pendingPinned = false;
-
-  let yZoomed = false;
-  let _isHovering = isHovering;
-  let _someSeriesIdx = false;
-  let _isPinned = isPinned;
-  let _style = style;
-
-  let plotVisible = false;
-
-  const syncTooltip = syncMode === DashboardCursorSync.Tooltip;
-
-  const _render = () => {
+  function _render() {
     pendingRender = false;
 
     if (pendingPinned) {
@@ -324,20 +412,7 @@ export const TooltipPlugin2 = ({
     // else revert to default...but only when the new pointer is different from prev
 
     selectedRange = null;
-  };
-
-  if (syncMode !== DashboardCursorSync.Off && config.scales[0].props.isTime) {
-    config.setCursor({
-      sync: {
-        key: syncScope,
-        scales: ['x', null],
-      },
-    });
   }
-
-  const scrollbarWidth = 16;
-  let winWid = 0;
-  let winHgt = 0;
 
   function dismiss() {
     if (!plot) {
@@ -370,22 +445,48 @@ export const TooltipPlugin2 = ({
     }
   }
 
-  // @todo
-  const updateWinSize = () => {
+  // @todo don't run on every render
+  function updateWinSize() {
     _isHovering && !_isPinned && dismiss();
 
     winWid = window.innerWidth - scrollbarWidth;
     winHgt = window.innerHeight - scrollbarWidth;
-  };
+  }
 
-  updateWinSize();
-
-  const updatePlotVisible = (plot: uPlot | null) => {
+  function updatePlotVisible(plot: uPlot | null) {
     if (!plot) {
       throw new Error('[updatePlotVisible] Plot not initiated!');
     }
     plotVisible = plot.rect.bottom <= winHgt && plot.rect.top >= 0 && plot.rect.left >= 0 && plot.rect.right <= winWid;
-  };
+  }
+
+  function updateHovering() {
+    if (viaSync) {
+      _isHovering = plotVisible && _someSeriesIdx && syncTooltip;
+    } else {
+      _isHovering = closestSeriesIdx != null || (hoverMode === TooltipHoverMode.xAll && _someSeriesIdx);
+    }
+  }
+
+  // in some ways this is similar to ClickOutsideWrapper.tsx
+  function downEventOutside(e: Event) {
+    if (e instanceof KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        dismiss();
+      }
+      return;
+    }
+
+    // this tooltip is Portaled, but actions inside it create forms in Modals
+    const isModalOrPortaled = '[role="dialog"], #grafana-portal-container';
+
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    if ((e.target as HTMLElement).closest(isModalOrPortaled) == null) {
+      dismiss();
+    }
+  }
 
   // fires on data value hovers/unhovers
   usePlotConfigHook(config, 'setLegend', (u) => {
@@ -612,34 +713,6 @@ export const TooltipPlugin2 = ({
     }
   });
 
-  const updateHovering = () => {
-    if (viaSync) {
-      _isHovering = plotVisible && _someSeriesIdx && syncTooltip;
-    } else {
-      _isHovering = closestSeriesIdx != null || (hoverMode === TooltipHoverMode.xAll && _someSeriesIdx);
-    }
-  };
-
-  // in some ways this is similar to ClickOutsideWrapper.tsx
-  const downEventOutside = (e: Event) => {
-    if (e instanceof KeyboardEvent) {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        dismiss();
-      }
-      return;
-    }
-
-    // this tooltip is Portaled, but actions inside it create forms in Modals
-    const isModalOrPortaled = '[role="dialog"], #grafana-portal-container';
-
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    if ((e.target as HTMLElement).closest(isModalOrPortaled) == null) {
-      dismiss();
-    }
-  };
-
   useLayoutEffect(() => {
     sizeRef.current?.observer.disconnect();
 
@@ -782,6 +855,8 @@ export const TooltipPlugin2 = ({
       );
     }
   }, [isHovering]);
+
+  updateWinSize();
 
   if (plot && isHovering) {
     return createPortal(
