@@ -246,6 +246,17 @@ type SearchOptions struct {
 
 	// Percentage of search requests that should fail immediately (0-100). 0 = disabled, 100 = all requests fail.
 	InjectFailuresPercent int
+
+	// Index snapshot settings
+	IndexSnapshotEnabled            bool
+	IndexSnapshotBucketURL          string
+	IndexSnapshotRemoteThreshold    int
+	IndexSnapshotUploadInterval     time.Duration
+	IndexSnapshotUploadDocThreshold int
+	IndexSnapshotCleanupInterval    time.Duration
+	IndexSnapshotMaxAge             time.Duration
+	IndexSnapshotLockTTL            time.Duration
+	IndexSnapshotMinKeep            int
 }
 
 type ResourceServerOptions struct {

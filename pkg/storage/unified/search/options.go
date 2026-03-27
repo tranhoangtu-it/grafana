@@ -65,6 +65,16 @@ func NewSearchOptions(
 			IndexMinUpdateInterval:    cfg.IndexMinUpdateInterval,
 			IndexModificationCacheTTL: cfg.IndexModificationCacheTTL,
 			InjectFailuresPercent:     cfg.SearchInjectFailuresPercent,
+
+			IndexSnapshotEnabled:            cfg.IndexSnapshotEnabled,
+			IndexSnapshotBucketURL:          cfg.IndexSnapshotBucketURL,
+			IndexSnapshotRemoteThreshold:    cfg.IndexSnapshotRemoteThreshold,
+			IndexSnapshotUploadInterval:     cfg.IndexSnapshotUploadInterval,
+			IndexSnapshotUploadDocThreshold: cfg.IndexSnapshotUploadDocThreshold,
+			IndexSnapshotCleanupInterval:    cfg.IndexSnapshotCleanupInterval,
+			IndexSnapshotMaxAge:             cfg.IndexSnapshotMaxAge,
+			IndexSnapshotLockTTL:            cfg.IndexSnapshotLockTTL,
+			IndexSnapshotMinKeep:            cfg.IndexSnapshotMinKeep,
 		}, nil
 	}
 	return resource.SearchOptions{
