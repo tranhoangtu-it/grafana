@@ -107,7 +107,7 @@ export function PanelNonApplicableDrilldownsSubHeader({ filtersVar, groupByVar, 
           } else if (!apiResult) {
             const stateResult = groupByApplicability?.find((entry) => entry.key === key);
             if (stateResult && !stateResult.applicable) {
-              items.push({ label: String(key) });
+              items.push({ label: String(key), reason: stateResult.reason });
             }
           }
         }

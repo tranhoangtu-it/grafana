@@ -59,6 +59,7 @@ import {
   DeprecatedInternalId,
 } from 'app/features/apiserver/types';
 import { DashboardWithAccessInfo } from 'app/features/dashboard/api/types';
+import { migrateGroupByVariablesV2 } from './groupByMigration';
 import {
   getDashboardSceneProfilerWithMetadata,
   enablePanelProfilingForDashboard,
@@ -292,7 +293,8 @@ function getVariables(
 
 function createVariablesForDashboard(dashboard: DashboardV2Spec, defaultVariables: VariableKind[] = []) {
   const isDefined = (v: SceneVariable | null): v is SceneVariable => Boolean(v);
-  const variableObjects = (dashboard.variables ?? [])
+  const variables = migrateGroupByVariablesV2(dashboard.variables ?? []);
+  const variableObjects = variables
     .map((v) => {
       try {
         return createSceneVariableFromVariableModel(v);
