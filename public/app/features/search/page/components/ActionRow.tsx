@@ -89,10 +89,10 @@ export const ActionRow = ({
   return (
     <Stack justifyContent="space-between" alignItems="center" wrap={true}>
       <Stack alignItems="center">
+        <TagFilter isClearable={false} tags={state.tag} tagOptions={getTagOptions} onChange={onTagFilterChange} />
         {config.featureToggles.teamFolders && onOwnerReferenceChange && (
           <OwnersFilter ownerReference={state.ownerReference ?? []} onChange={onOwnerReferenceChange} />
         )}
-        <TagFilter isClearable={false} tags={state.tag} tagOptions={getTagOptions} onChange={onTagFilterChange} />
         {config.featureToggles.panelTitleSearch && (
           <Checkbox
             data-testid="include-panels"
