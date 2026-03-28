@@ -5,6 +5,7 @@ const fs = require('fs');
 const COVERAGE_MAIN_PATH = './coverage-main/coverage-summary.json';
 const COVERAGE_PR_PATH = './coverage-pr/coverage-summary.json';
 const COMPARISON_OUTPUT_PATH = './coverage-comparison.md';
+const COVERAGE_EPSILON = 0.02;
 
 /**
  * Reads and parses a coverage summary JSON file
@@ -38,13 +39,16 @@ function formatPercentage(value) {
  */
 function getStatusIcon(mainValue, prValue) {
   // Round to 2 decimal places for comparison to match display precision
-  const prPct = Math.round(prValue * 100) / 100;
-  const mainPct = Math.round(mainValue * 100) / 100;
+  const prPercent = Math.round(prValue * 100) / 100;
+  const mainPercent = Math.round(mainValue * 100) / 100;
+  const delta = Math.round((prPercent - mainPercent) * 100) / 100;
 
-  if (prPct >= mainPct) {
-    return '✅ Pass';
+  if (delta > 0) {
+    return '✅';
+  } else if (delta > -COVERAGE_EPSILON) {
+    return '—';
   }
-  return '❌ Fail';
+  return '❌';
 }
 
 /**
@@ -57,9 +61,9 @@ function getOverallStatus(mainSummary, prSummary) {
   const metrics = ['lines', 'statements', 'functions', 'branches'];
   const allPass = metrics.every((metric) => {
     // Round to 2 decimal places for comparison to match display precision
-    const prPct = Math.round(prSummary[metric].pct * 100) / 100;
-    const mainPct = Math.round(mainSummary[metric].pct * 100) / 100;
-    return prPct >= mainPct;
+    const prPercent = Math.round(prSummary[metric].pct * 100) / 100;
+    const mainPercent = Math.round(mainSummary[metric].pct * 100) / 100;
+    return prPercent > mainPercent - COVERAGE_EPSILON;
   });
   return allPass;
 }
@@ -71,7 +75,10 @@ function getOverallStatus(mainSummary, prSummary) {
  * @returns {string} Formatted delta (e.g., "+1.2%" or "-0.5%")
  */
 function formatDelta(prValue, mainValue) {
-  const delta = prValue - mainValue;
+  const prPercent = Math.round(prValue * 100) / 100;
+  const mainPercent = Math.round(mainValue * 100) / 100;
+  const delta = prPercent - mainPercent;
+
   if (delta > 0) {
     return `+${delta.toFixed(2)}%`;
   } else if (delta < 0) {
