@@ -43,7 +43,7 @@ function getStatusIcon(mainValue, prValue) {
   const mainPercent = Math.round(mainValue * 100) / 100;
   const delta = Math.round((prPercent - mainPercent) * 100) / 100;
 
-  if (delta > 0) {
+  if (delta >= 0) {
     return '✅';
   } else if (delta > -COVERAGE_EPSILON) {
     return '—';
